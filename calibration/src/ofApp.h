@@ -17,6 +17,8 @@ class ofApp : public ofBaseApp{
 		ofxKinect kinect;
 
 		ofxCvGrayscaleImage grayImage; // grayscale depth image
+        ofxCvGrayscaleImage grayThreshNear;
+        ofxCvGrayscaleImage grayThreshFar;
 		
 		ofxCvContourFinder contourFinder;
 
@@ -24,11 +26,18 @@ class ofApp : public ofBaseApp{
 		const int displayWidth = 640;
 		const int displayHeight = 480;
 
+		int width;
+		int height;
+
 		// The amount of x and y 'calibration'
 		int dx;
 		int dy;
+		// and zoom 
+		float zoom;
 
 		int nearThreshold;
 		int farThreshold;
+    
+        bool bThreshWithOpenCV;
 		
 };
