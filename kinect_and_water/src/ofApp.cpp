@@ -34,6 +34,15 @@ void ofApp::setup() {
 	bThreshWithOpenCV = true;
 
 	ofSetFrameRate(60);
+	ofEnableAlphaBlending();
+
+	ripples.allocate(640, 480);
+	bounce.allocate(640,480);
+
+	ofImage background;
+	background.loadImage("fondo.jpg");
+	
+	bounce.setTexture(background.getTextureReference(), 1);
 
 	// zero the tilt on startup
 	angle = 30;
@@ -46,7 +55,7 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 
-	ofBackground(100, 100, 100);
+	//ofBackground(100, 100, 100);
 
 	kinect.update();
 
@@ -86,6 +95,18 @@ void ofApp::update() {
 		// also, find holes is set to true so we will get interior contours as well....
 		contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
 	}
+
+	// Ripples code
+
+	ripples.begin();
+	ofFill();
+    ofSetColor(ofNoise( ofGetFrameNum() ) * 255 * 5, 255);
+    ofEllipse(mouseX,mouseY, 10,10);
+    ripples.end();
+    ripples.update();
+    
+    bounce << ripples;
+
 }
 
 //--------------------------------------------------------------
@@ -102,8 +123,8 @@ void ofApp::draw() {
 		//kinect.drawDepth(10, 10, 400, 300);
 		//kinect.draw(420, 10, 400, 300);
 
-		grayImage.draw(10, 10, displayWidth, displayHeight);
-		contourFinder.draw(10, 10, displayWidth, displayHeight);
+		grayImage.draw(0, 0, displayWidth, displayHeight);
+		contourFinder.draw(0, 0, displayWidth, displayHeight);
 	}
 
 	// draw instructions
@@ -132,6 +153,10 @@ void ofApp::draw() {
     }
 
 	//ofDrawBitmapString(reportStream.str(), 20, 652);
+
+	// Ripples again
+	ripples.draw(0,0);
+	bounce.draw(640,0);
 
 }
 
@@ -254,7 +279,9 @@ void ofApp::keyPressed (int key) {
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button)
-{}
+{
+	ripples.damping = ofMap(y, 0, ofGetHeight(), 0.9, 1.0, true);
+}
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
