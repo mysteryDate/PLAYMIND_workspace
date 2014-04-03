@@ -2115,14 +2115,24 @@
 
 1396362304 source:c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\icon.rc
 
-1396362294 source:c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\src\main.cpp
+1396472539 source:c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\src\main.cpp
 	"ofApp.h"
 
-1396362294 c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\src\ofapp.h
+1396548966 c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\src\ofapp.h
 	"ofMain.h"
 	"ofxOpenCv.h"
 	"ofxKinect.h"
+	"ofxRipples.h"
+	"ofxBounce.h"
 
 1396472509 source:c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\apps\playmind_workspace\kinect_and_water\src\ofapp.cpp
 	"ofApp.h"
+
+1396092508 c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\addons\ofxfx\src\operations\ofxripples.h
+	"ofMain.h"
+	"ofxFXObject.h"
+
+1396092508 c:\users\xframe-01\desktop\aaron_kinect_projection\openframeworks\addons\ofxfx\src\operations\ofxbounce.h
+	"ofMain.h"
+	"ofxFXObject.h"
 
