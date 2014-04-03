@@ -24,16 +24,11 @@ public:
 	
 	ofxKinect kinect;
 	
-	ofxCvColorImage colorImg;
-	
 	ofxCvGrayscaleImage grayImage; // grayscale depth image
 	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
 	ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
 	
 	ofxCvContourFinder contourFinder;
-	
-	bool bThreshWithOpenCV;
-	bool bDrawPointCloud;
 	
 	int nearThreshold;
 	int farThreshold;
@@ -45,9 +40,4 @@ public:
 	// For ripple visualization
 	ofxRipples	ripples;
 	ofxBounce	bounce;
-	
-	int angle;
-	
-	// used for viewing the point cloud
-	ofEasyCam easyCam;
 };
