@@ -24,11 +24,6 @@ void ofApp::setup() {
 		ofLogNotice() << "zero plane dist: " << kinect.getZeroPlaneDistance() << "mm";
 	}
 
-#ifdef USE_TWO_KINECTS
-	kinect2.init();
-	kinect2.open();
-#endif
-
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
 	grayThreshNear.allocate(kinect.width, kinect.height);
@@ -91,10 +86,6 @@ void ofApp::update() {
 		// also, find holes is set to true so we will get interior contours as well....
 		contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
 	}
-
-#ifdef USE_TWO_KINECTS
-	kinect2.update();
-#endif
 }
 
 //--------------------------------------------------------------
@@ -111,12 +102,8 @@ void ofApp::draw() {
 		//kinect.drawDepth(10, 10, 400, 300);
 		//kinect.draw(420, 10, 400, 300);
 
-		grayImage.draw(10, 10, 1920, 1080);
-		contourFinder.draw(10, 10, 1920, 1080);
-
-#ifdef USE_TWO_KINECTS
-		kinect2.draw(420, 320, 400, 300);
-#endif
+		grayImage.draw(10, 10, displayWidth, displayHeight);
+		contourFinder.draw(10, 10, displayWidth, displayHeight);
 	}
 
 	// draw instructions
@@ -177,10 +164,6 @@ void ofApp::drawPointCloud() {
 void ofApp::exit() {
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
-
-#ifdef USE_TWO_KINECTS
-	kinect2.close();
-#endif
 }
 
 //--------------------------------------------------------------
