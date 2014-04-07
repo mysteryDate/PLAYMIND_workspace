@@ -31,16 +31,11 @@ class ofApp : public ofBaseApp{
 		int width;
 		int height;
 
-		// The amount of x and y 'calibration'
-		int dx;
-		int dy;
-		// and zoom 
-		float zoom;
+		ofPoint centroids[20];
 
 		int nearThreshold;
 		int farThreshold;
     
-        bool bThreshWithOpenCV;
         bool modeSelection;
 		
 };
