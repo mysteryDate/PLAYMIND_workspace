@@ -54,6 +54,8 @@ void ofApp::update(){
             }
         }
 	}
+
+	contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 10, false);
 }
 
 //--------------------------------------------------------------
