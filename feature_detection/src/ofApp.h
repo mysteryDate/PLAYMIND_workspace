@@ -17,6 +17,7 @@ class ofApp : public ofBaseApp{
 		ofxKinect kinect;
 
 		ofxCvColorImage colorImg;
+        ofxCvGrayscaleImage background;
 
 		ofxCvGrayscaleImage grayImage; // grayscale depth image
         ofxCvGrayscaleImage grayThreshNear;
@@ -31,7 +32,13 @@ class ofApp : public ofBaseApp{
 		int width;
 		int height;
 
+        // The centroid of every blob (I don't know if explicity setting the size is a good idea)
 		ofPoint centroids[20];
+        // The entry point of every blob
+        ofPoint entries[20];
+
+        //where on the vector we wanna be
+        int vpoint;
 
 		int nearThreshold;
 		int farThreshold;

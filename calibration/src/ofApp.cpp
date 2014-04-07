@@ -16,11 +16,11 @@ void ofApp::setup(){
 	height = kinect.height;
 
 	nearThreshold = 230;
-	farThreshold = 172;
+	farThreshold = 180;
 
-	dx = -132;
-	dy = -313;
-	zoom = 2.59374;
+	dx = 0;
+	dy = 0;
+	zoom = 2.88;
 
 	ofSetFrameRate(120);
     
@@ -61,6 +61,10 @@ void ofApp::update(){
 
 }
 
+void ofApp::calibrateImage(ofxCvGrayscaleImage& image) {
+    
+}
+
 //--------------------------------------------------------------
 void ofApp::draw(){
 
@@ -71,7 +75,7 @@ void ofApp::draw(){
 		contourFinder.draw(dx, dy, zoom*width, zoom*height);
 	}
 	else {
-		kinect.draw(dx, dy, zoom*width, zoom*height);
+		kinect.drawDepth(dx, dy, zoom*width, zoom*height);
 	}
 
 	ofSetColor(0, 255, 0);

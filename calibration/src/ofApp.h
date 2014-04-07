@@ -12,6 +12,8 @@ class ofApp : public ofBaseApp{
 		void draw();
 		void exit();
 
+		void calibrateImage(ofxCvGrayscaleImage& image);
+
 		void keyPressed(int key);
 
 		ofxKinect kinect;

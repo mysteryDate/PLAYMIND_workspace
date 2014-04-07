@@ -48,6 +48,8 @@ void ofApp::update(){
 	{
 		ofxCvBlob blob = contourFinder.blobs.at(i);
 		centroids[i] = blob.centroid;
+        vector< ofPoint > points = blob.pts;
+        entries[i] = points.at(vpoint);
 	}
 }
 
@@ -69,20 +71,16 @@ void ofApp::draw(){
 	for (int i = 0; i < contourFinder.nBlobs; ++i)
 	{
 		ofCircle(centroids[i], 10);
+        ofCircle(entries[i], 5);
 	}
-
-	// stringstream reportStream;
-
-	// reportStream << "near threshold: " << nearThreshold << endl
- //    << "far threshold: " << farThreshold << endl
- //    << "thresh with open cv? " << bThreshWithOpenCV << endl
- //    << "framerate: " << ofToString(ofGetFrameRate()) << endl;
-
-	// ofDrawBitmapString(reportStream.str(), 1600, 900);
     
-    //ofSetColor(0, 255, 0);
-    //ofLine(dx + zoom*width/2, dy + zoom*height/4, dx + zoom*width/2, dy + 0.75*zoom*height);
-    //ofLine(dx + zoom*width/4, dy + zoom*height/2, dx + 0.75*zoom*width, dy + zoom*height/2);
+    stringstream reportStream;
+    reportStream << "vpoint is: " << vpoint << endl;
+    if(contourFinder.nBlobs >= 1) {
+        reportStream << "number of points is: " << contourFinder.blobs.at(0).nPts << endl;
+    }
+    
+    ofDrawBitmapString(reportStream.str(), 400, 400);
     
 }
 
@@ -120,6 +118,15 @@ void ofApp::keyPressed(int key){
         case 'm':
         	modeSelection = !modeSelection;
         	break;
+            
+        case 'n':
+            vpoint++;
+            break;
+            
+        case 'b':
+            vpoint++;
+            break;
+            
 
 	}
 }
