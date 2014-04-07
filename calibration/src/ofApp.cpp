@@ -8,6 +8,7 @@ void ofApp::setup(){
 	grayImage.allocate(kinect.width, kinect.height);
     grayThreshNear.allocate(kinect.width, kinect.height);
 	grayThreshFar.allocate(kinect.width, kinect.height);
+	colorImg.allocate(kinect.width, kinect.height);
     
     ofBackground(50, 50, 50);
 
@@ -24,13 +25,15 @@ void ofApp::setup(){
 	ofSetFrameRate(120);
     
     bThreshWithOpenCV = false;
+    modeSelection = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	kinect.update();
 
-	if(kinect.isFrameNew() ) {
+	if(kinect.isFrameNew() and modeSelection) {
+
 		// load grayscale depth image from the kinect source
 		grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
         
@@ -53,9 +56,9 @@ void ofApp::update(){
                 }
             }
         }
+		contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 10, false);
 	}
 
-	contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 10, false);
 }
 
 //--------------------------------------------------------------
@@ -63,8 +66,13 @@ void ofApp::draw(){
 
 	ofSetColor(255, 255, 255);
 
-	grayImage.draw(dx, dy, zoom*width, zoom*height);
-	contourFinder.draw(dx, dy, zoom*width, zoom*height);
+	if(modeSelection) {
+		grayImage.draw(dx, dy, zoom*width, zoom*height);
+		contourFinder.draw(dx, dy, zoom*width, zoom*height);
+	}
+	else {
+		kinect.draw(dx, dy, zoom*width, zoom*height);
+	}
 
 	ofSetColor(0, 255, 0);
 	stringstream reportStream;
@@ -136,7 +144,7 @@ void ofApp::keyPressed(int key){
 			break;
 
 		case 'x':
-			zoom *= 0.09;
+			zoom *= 0.99;
 			break;
 
 		case 'p':
@@ -147,6 +155,10 @@ void ofApp::keyPressed(int key){
         case ' ':
             bThreshWithOpenCV = !bThreshWithOpenCV;
             break;
+
+        case 'm':
+        	modeSelection = !modeSelection;
+        	break;
 
 	}
 }

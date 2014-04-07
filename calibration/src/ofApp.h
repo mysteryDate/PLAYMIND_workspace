@@ -16,6 +16,8 @@ class ofApp : public ofBaseApp{
 
 		ofxKinect kinect;
 
+		ofxCvColorImage colorImg;
+
 		ofxCvGrayscaleImage grayImage; // grayscale depth image
         ofxCvGrayscaleImage grayThreshNear;
         ofxCvGrayscaleImage grayThreshFar;
@@ -39,5 +41,6 @@ class ofApp : public ofBaseApp{
 		int farThreshold;
     
         bool bThreshWithOpenCV;
+        bool modeSelection;
 		
 };
