@@ -36,9 +36,15 @@ class ofApp : public ofBaseApp{
 		ofPoint centroids[20];
         // The entry point of every blob
         ofPoint entries[20];
+        ofPoint exits[20];
 
         //where on the vector we wanna be
         int vpoint;
+    
+        //Polyline experiment
+        ofPolyline polyLine;
+    
+        vector< ofPoint > edgePoints;
 
 		int nearThreshold;
 		int farThreshold;

@@ -13,8 +13,8 @@ void ofApp::setup(){
 	width = kinect.width;
 	height = kinect.height;
 
-	nearThreshold = 230;
-	farThreshold = 182;
+	nearThreshold = 255;
+	farThreshold = 220;
 
 	ofSetFrameRate(60);
     
@@ -41,15 +41,35 @@ void ofApp::update(){
             }
         }
         
-		contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 10, false);
+		contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 1, false);
 	}
 
-	for (int i = 0; i < contourFinder.nBlobs; ++i)
+	if(contourFinder.nBlobs == 1)
 	{
-		ofxCvBlob blob = contourFinder.blobs.at(i);
-		centroids[i] = blob.centroid;
+		ofxCvBlob blob = contourFinder.blobs.at(0);
+		centroids[0] = blob.centroid;
         vector< ofPoint > points = blob.pts;
-        entries[i] = points.at(vpoint);
+        polyLine = ofPolyline(points);
+        int numFound = 0;
+        int maxX = 0;
+        int maxY = 0;
+        int minX = width;
+        int minY = height;
+        for (int i = 0; i < blob.nPts; i++) {
+            if ( points[i].x > maxX)
+                maxX = points[i].x;
+            if ( points[i].y > maxY)
+                maxY = points[i].y;
+            if ( points[i].x < minX)
+                minX = points[i].x;
+            if ( points[i].y < minY)
+                minY = points[i].y;
+            if (points[i].y == 1 or points[i].y == 478 or points[i].x == 1 or points[i].x == 631) {
+                numFound++;
+                edgePoints.at(numFound) = points.at(i);
+            }
+        }
+        cout << "maxX: " << maxX << ", maxY: " << maxY << ", minX: " << minX << ", minY: " << minY << endl;
 	}
 }
 
@@ -71,7 +91,9 @@ void ofApp::draw(){
 	for (int i = 0; i < contourFinder.nBlobs; ++i)
 	{
 		ofCircle(centroids[i], 10);
-        ofCircle(entries[i], 5);
+        for (int j = 0; j < edgePoints.size(); ++j) {
+            ofCircle(edgePoints.at(j), 5);
+        }
 	}
     
     stringstream reportStream;
@@ -79,6 +101,9 @@ void ofApp::draw(){
     if(contourFinder.nBlobs >= 1) {
         reportStream << "number of points is: " << contourFinder.blobs.at(0).nPts << endl;
     }
+    reportStream << "near threshold: " << nearThreshold << endl
+    << "far threshold: " << farThreshold << endl
+    << "maxY: " << exits[0].y << endl;
     
     ofDrawBitmapString(reportStream.str(), 400, 400);
     
