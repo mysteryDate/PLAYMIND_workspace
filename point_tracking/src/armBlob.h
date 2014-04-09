@@ -14,6 +14,7 @@ public:
 
 	ofPoint wrist[2];
 	vector< ofPoint > ends;
+	vector< int > endIndex;
 
 	ofPolyline simplifiedBlob;
 
