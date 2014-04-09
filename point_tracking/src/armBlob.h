@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 
-class armBlob : public ofxBlob {
+class armBlob : public ofxCvBlob {
 
 public:
 
@@ -12,6 +12,8 @@ public:
 	// Constructor
 	armBlob();
 
-	ofxPoint wrist[2];
-	ofxPoint end[2];
+	ofPoint wrist[2];
+	ofPoint end[2];
+
+	ofPolyline simplifiedBlob;
 };
