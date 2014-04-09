@@ -118,13 +118,41 @@ void testApp::update(){
                 //getAvgSlope(firstPos, -1, 20);
                 //getAvgSlope(secondPos, 1, 20);
             }
-            findInflectionPoints();
+            //findInflectionPoints();
+            findKeyPoints();
 
         }
         
     }
     
     //cout << edges.size() << endl;
+}
+
+void testApp::findKeyPoints() {
+
+    vector< ofPoint > &points = contourFinder.blobs[0].pts;
+    int length = points.size();
+    keyPoints.clear();
+
+    float dminus2 = 0; // The distance two samples ago
+    float dminus1 = 0; // The distance last sample
+
+    for(int i = 1; i < length - 1; ++i) {
+        float m;
+        float b;
+        float dsquared;
+        m = (points[i + 1].y - points[i - 1].y) / (points[i + 1].x - points[i - 1].x);
+        b = points[i + 1].y - m * points[i + 1].x;
+        dsquared = (points[i].y - m * points[i].x - b) * (points[i].y - m * points[i].x - b) / (m * m + 1);
+
+        if(dminus1 - dminus2 > 0 and dsquared - dminus1 <= 0) { // The distance got bigger last sample, and is getting smaller now
+            keyPoints.push_back(points[i - 1]);
+        }
+
+        dminus2 = dminus1;  // Move my pointers (thanks Gary!)
+        dminus1 = dsquared;
+    }
+
 }
 
 void testApp::findInflectionPoints() {
@@ -246,8 +274,8 @@ void testApp::draw(){
 //            ofCircle(points[i], 1);
 //            i++;
 //        }
-        for (int i = 0; i < inflectionPoints.size(); i++) {
-            ofCircle(inflectionPoints[i], 3);
+        for (int i = 0; i < keyPoints.size(); i++) {
+            ofCircle(keyPoints[i], 3);
         }
         ofSetColor(0,0,255);
         for (int i = 0; i < points.size(); i++) {

@@ -64,5 +64,9 @@ class testApp : public ofBaseApp{
         void findInflectionPoints();
         vector< ofPoint > inflectionPoints;
 
+        // Distance to line method
+        void findKeyPoints();
+        vector< ofPoint > keyPoints;
+
 };
 
