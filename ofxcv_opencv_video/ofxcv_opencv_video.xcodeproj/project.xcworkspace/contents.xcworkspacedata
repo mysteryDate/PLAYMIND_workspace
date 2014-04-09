@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:allDots.xcodeproj">
+      location = "self:ofxcv_opencv_video.xcodeproj">
    </FileRef>
 </Workspace>
