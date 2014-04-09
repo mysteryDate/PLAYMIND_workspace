@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
+#include "armBlob.h"
 
 class ofApp : public ofBaseApp{
 
@@ -45,6 +46,8 @@ class ofApp : public ofBaseApp{
 
       	vector< ofPolyline > polyLines;
         void simplify(ofxCvBlob &blob);
+
+        vector< armBlob > arms;
 
 		
 };

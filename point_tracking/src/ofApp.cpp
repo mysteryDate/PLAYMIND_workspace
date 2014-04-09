@@ -19,7 +19,7 @@ void ofApp::setup(){
 	dy = 0;
 	zoom = 1;
 
-	ofSetFrameRate(120);
+	ofSetFrameRate(60);
 
     modeSelection = true;
     
@@ -53,10 +53,12 @@ void ofApp::update(){
 		contourFinder.findContours(grayImage, 20, (kinect.width*kinect.height)/2, 10, false);
 
 		if(contourFinder.nBlobs != 0) {
-			polyLines.clear();
+			arms.clear();
 			for (int i = 0; i < contourFinder.nBlobs; ++i)
 			{
-				simplify(contourFinder.blobs[i]);
+				armBlob arm = armBlob(contourFinder.blobs[i], simplifyTolerance);
+				arm.findEnds(0, 0, width, height);
+				arms.push_back(arm);
 			}
 		}
 	}
@@ -80,12 +82,12 @@ void ofApp::draw(){
 		kinect.drawDepth(dx, dy, zoom*width, zoom*height);
 	}
 	contourFinder.draw(dx, dy, zoom*width, zoom*height);
-	for (int i = 0; i < contourFinder.nBlobs; ++i)
+	for (int i = 0; i < arms.size(); ++i)
 	{
-		vector< ofPoint > &points = polyLines[i].getVertices();
-		for (int i = 0; i < points.size(); ++i)
+		arms[i].simplifiedBlob.draw();
+		for (int j = 0; j < arms[i].ends.size(); ++j)
 		{
-		 	ofCircle(points[i], 3);
+			ofCircle(arms[i].ends[j], 3);
 		}
 	}
 
@@ -98,9 +100,7 @@ void ofApp::draw(){
     << "near threshold: " << nearThreshold << endl
     << "far threshold: " << farThreshold << endl
     << "framerate: " << ofToString(ofGetFrameRate()) << endl
-    << "simplifyTolerance: " << simplifyTolerance << endl
-    << "smoothing amount: " << smoothAmt << endl
-    << "smoothing shape: " << smoothShape << endl;
+    << "simplifyTolerance: " << simplifyTolerance << endl;
 
 	ofDrawBitmapString(reportStream.str(), 1600, 900);
     
@@ -179,22 +179,6 @@ void ofApp::keyPressed(int key){
 
         case 'r':
         	simplifyTolerance -= 0.1;
-        	break;
-
-        case 'g':
-        	smoothAmt += 1;
-            break;
-
-        case 'f':
-        	smoothAmt -= 1;
-        	break;
-
-        case 'b':
-        	smoothShape += 0.1;
-            break;
-
-        case 'v':
-        	smoothShape -= 0.1;
         	break;
 
         case ' ':
