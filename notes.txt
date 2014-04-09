@@ -1,0 +1,13 @@
+dx: -132
+dy: -313
+zoom: 2.59374
+far thresh: 170
+
+===============
+Ideas for finding wrists
+1. Local maxima of points from a line made by next and previous point
+2. Inflection points
+3. Best fit lines to forearms
+4. Maximum size circle to fit (must be hand)
+5. Radius of circle created by three points, local maxima (might be like 1.)
+Perhaps some combination?
