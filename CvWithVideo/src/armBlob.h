@@ -10,4 +10,6 @@ class armBlob {
 
 		ofPolyline shape;
 
+		int label;
+
 };

@@ -1,5 +1,8 @@
 #include "ofApp.h"
 
+using namespace ofxCv;
+using namespace cv;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -15,8 +18,9 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(0,0,0);
 
-	tolerance = 1;
+	tolerance = 9;
 
+    contourFinder.setMinAreaRadius(20);
 
 
 }
@@ -48,6 +52,7 @@ void ofApp::update(){
 			ofPolyline shape = contourFinder.getPolyline(i);
 			shape.simplify(tolerance);
 			armBlob arm;
+			arm.label = contourFinder.getLabel(i);
 			arm.shape = shape;
 			arms.push_back(arm);
 		}
@@ -62,6 +67,7 @@ void ofApp::draw(){
 	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	contourFinder.draw();
+	RectTracker& tracker = contourFinder.getTracker();
 
 	ofPushStyle();
 	ofSetColor(0, 255, 0);
@@ -69,6 +75,8 @@ void ofApp::draw(){
 	{
 		arms[i].shape.draw();
 	}
+
+	drawLabels();
 
 
 	stringstream reportStream;
@@ -78,6 +86,23 @@ void ofApp::draw(){
 	<< "Framerate: " << ofGetFrameRate() << endl;
 	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 50);
 	ofPopStyle();
+
+}
+
+void ofApp::drawLabels() {
+
+	RectTracker& tracker = contourFinder.getTracker();
+
+	for (int i = 0; i < contourFinder.size(); ++i)
+	{
+		ofPoint center = toOf(contourFinder.getCenter(i));
+		ofPushMatrix();
+		ofTranslate(center.x, center.y);
+		int label = contourFinder.getLabel(i);
+		string msg = ofToString(label) + ":" + ofToString(tracker.getAge(label));
+		ofDrawBitmapString(msg, 0, 0);
+		ofPopMatrix();
+	}
 
 }
 
@@ -120,6 +145,14 @@ void ofApp::keyPressed(int key){
 		case 'r':
 			tolerance -= 0.1;
 			break;
+
+		case OF_KEY_RIGHT:
+			if(!bPlaying) movie.nextFrame();
+            break;
+            
+        case OF_KEY_LEFT:
+            if(!bPlaying) movie.previousFrame();
+            break;
 
 	}
 

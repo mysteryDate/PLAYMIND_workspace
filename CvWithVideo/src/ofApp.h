@@ -16,6 +16,7 @@ class ofApp : public ofBaseApp{
 		void draw();
 
 		void keyPressed(int key);
+		void drawLabels();
 
 		ofVideoPlayer	movie;
 		bool			bPlaying;
@@ -26,7 +27,6 @@ class ofApp : public ofBaseApp{
 		ofxCvColorImage 		colorImg;
 		ofxCvGrayscaleImage		grayImg;
 		ofxCv::ContourFinder	contourFinder;
-		bool showLabels;
 
 		vector< armBlob > arms;
 		float tolerance;
