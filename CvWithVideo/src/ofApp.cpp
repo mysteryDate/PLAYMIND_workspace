@@ -40,12 +40,12 @@ void ofApp::update(){
 		    } 
 		}
 
-		contourFinder.findContours(grayImg, 20, (DISPLAY_WIDTH*DISPLAY_HEIGHT)/2, 10, false);
+		contourFinder.findContours(grayImg);
 		arms.clear();
 
-		for (int i = 0; i < contourFinder.nBlobs; ++i)
+		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			ofPolyline shape = ofPolyline(contourFinder.blobs[i].pts);
+			ofPolyline shape = contourFinder.getPolyline(i);
 			shape.simplify(tolerance);
 			armBlob arm;
 			arm.shape = shape;
@@ -61,7 +61,7 @@ void ofApp::draw(){
 
 	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	contourFinder.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	contourFinder.draw();
 
 	ofPushStyle();
 	ofSetColor(0, 255, 0);

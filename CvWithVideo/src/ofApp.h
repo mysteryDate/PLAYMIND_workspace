@@ -25,7 +25,8 @@ class ofApp : public ofBaseApp{
 
 		ofxCvColorImage 		colorImg;
 		ofxCvGrayscaleImage		grayImg;
-		ofxCvContourFinder		contourFinder;
+		ofxCv::ContourFinder	contourFinder;
+		bool showLabels;
 
 		vector< armBlob > arms;
 		float tolerance;
