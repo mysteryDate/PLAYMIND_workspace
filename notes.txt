@@ -11,3 +11,7 @@ Ideas for finding wrists
 4. Maximum size circle to fit (must be hand)
 5. Radius of circle created by three points, local maxima (might be like 1.)
 Perhaps some combination?
+
+===============
+Smallest female hand: 14.8 cm (6”)
+Largest Male hand: 21 cm (8.25”)
