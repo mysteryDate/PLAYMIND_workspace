@@ -7,6 +7,7 @@
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
 #include "armBlob.h"
+#include "ArmContourFinder.h"
 
 class ofApp : public ofBaseApp{
 
@@ -17,6 +18,7 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void drawLabels();
+		void drawEnds();
 
 		ofVideoPlayer	movie;
 		bool			bPlaying;
@@ -26,9 +28,12 @@ class ofApp : public ofBaseApp{
 
 		ofxCvColorImage 		colorImg;
 		ofxCvGrayscaleImage		grayImg;
-		ofxCv::ContourFinder	contourFinder;
+		ArmContourFinder	contourFinder;
 
-		vector< armBlob > arms;
-		float tolerance;
+		//Maximum points of blobs (for testing)
+		int xMin;
+		int yMin;
+		int xMax;
+		int yMax;
 		
 };
