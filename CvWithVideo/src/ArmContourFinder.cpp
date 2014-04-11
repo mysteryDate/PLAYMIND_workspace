@@ -28,21 +28,25 @@ vector< int >& ArmContourFinder::getBounds() {
 
 void ArmContourFinder::findEnds() {
 
+	ends.clear();
+	ends.resize(polylines.size() );
 	for (int i = 0; i < polylines.size(); ++i)
 	{
 		vector< ofPoint > pts = polylines[i].getVertices();
+		vector< ofPoint > possibleEnds;
+		ends[i].clear();
+		ends[i].resize(2);
 		for (int j = 0; j < pts.size(); ++j)
 		{
-			vector< ofPoint > possibleEnds;
-			if(pts[i].x <= bounds[0] || pts[i].y <= bounds[1] 
-				|| pts[i].x >= bounds[2] || pts[i].y >= bounds[3]) {
-				possibleEnds.push_back(pts[i]);
+			if(pts[j].x <= bounds[0] || pts[j].y <= bounds[1] 
+				|| pts[j].x >= bounds[2] || pts[j].y >= bounds[3]) {
+				possibleEnds.push_back(pts[j]);
 			}
-			if(possibleEnds.size() >= 2 ) {
-				//Set the actual ends the first and the last ones found
-				ends[i][0] = possibleEnds[0];
-				ends[i][1] = possibleEnds.back();
-			}
+		}
+		if(possibleEnds.size() >= 2 ) {
+			//Set the actual ends the first and the last ones found
+			ends[i][0] = possibleEnds[0];
+			ends[i][1] = possibleEnds.back();
 		}
 	}
 

@@ -7,7 +7,7 @@ public:
 
 	ArmContourFinder();
 
-	vector< ofPoint > ends[2];
+	vector< vector< ofPoint > > ends;
 	vector< ofPoint > wrists[2];
 	vector< ofPolyline > simplifiedPolylines;
 
