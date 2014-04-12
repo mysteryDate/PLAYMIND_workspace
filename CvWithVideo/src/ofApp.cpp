@@ -1,5 +1,11 @@
 #include "ofApp.h"
 
+// There are dead spots on the video, this is the take
+#define LEFT_PAD	20
+#define RIGHT_PAD	35
+#define TOP_PAD		50
+#define BOTTOM_PAD	5
+
 using namespace ofxCv;
 using namespace cv;
 
@@ -38,6 +44,7 @@ void ofApp::update(){
 
 		colorImg.setFromPixels(movie.getPixels(), DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		grayImg = colorImg;
+        grayImg.setROI(LEFT_PAD, TOP_PAD, DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
 
 		unsigned char * pix = grayImg.getPixels();
 		
@@ -73,13 +80,20 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	contourFinder.draw();
 	RectTracker& tracker = contourFinder.getTracker();
 
 	drawLabels();
-	drawEnds();
+	//drawEnds();
+    ofSetColor(255,255,255);
+    for (int i = 0; i < contourFinder.size(); i++) {
+        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
+        for (int j = 0; j < line.size(); j++) {
+            ofCircle(line[i], 3);
+        }
+    }
 	
 	ofPushStyle();
 	ofSetColor(0, 255, 0);
@@ -97,7 +111,7 @@ void ofApp::draw(){
 
 	ofNoFill();
 	vector< int > bounds = contourFinder.getBounds();
-	ofRect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
+	//ofRect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
 
 	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 50);
 	ofPopStyle();

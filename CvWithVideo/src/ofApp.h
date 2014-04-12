@@ -1,7 +1,9 @@
 #pragma once
 
-#define DISPLAY_WIDTH 640
+#define DISPLAY_WIDTH 640	
 #define DISPLAY_HEIGHT 480
+
+// 585 x 425
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
@@ -25,7 +27,7 @@ class ofApp : public ofBaseApp{
 
 		int				nearThreshold;
 		int				farThreshold;
-
+		
 		ofxCvColorImage 		colorImg;
 		ofxCvGrayscaleImage		grayImg;
 		ArmContourFinder	contourFinder;

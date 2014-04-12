@@ -7,7 +7,7 @@ ArmContourFinder::ArmContourFinder() {
 	bounds.push_back(605);
 	bounds.push_back(478);
 
-	tolerance = 1;
+	tolerance = 9;
 
 }
 
@@ -32,14 +32,16 @@ void ArmContourFinder::findEnds() {
 	ends.resize(polylines.size() );
 	for (int i = 0; i < polylines.size(); ++i)
 	{
-		vector< ofPoint > pts = polylines[i].getVertices();
+        ofPolyline line = polylines[i].getVertices();
+        //line.simplify(tolerance);
+		vector< ofPoint > pts = line.getVertices();
 		vector< ofPoint > possibleEnds;
 		ends[i].clear();
 		ends[i].resize(2);
 		for (int j = 0; j < pts.size(); ++j)
 		{
-			if(pts[j].x <= bounds[0] || pts[j].y <= bounds[1] 
-				|| pts[j].x >= bounds[2] || pts[j].y >= bounds[3]) {
+			if(pts[j].x == bounds[0] || pts[j].y == bounds[1]
+				|| pts[j].x == bounds[2] || pts[j].y == bounds[3]) {
 				possibleEnds.push_back(pts[j]);
 			}
 		}
