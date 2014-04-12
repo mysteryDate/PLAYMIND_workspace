@@ -41,7 +41,7 @@ void ArmContourFinder::findEnds() {
 		for (int j = 0; j < pts.size(); ++j)
 		{
 			if(pts[j].x == bounds[0] || pts[j].y == bounds[1]
-				|| pts[j].x == bounds[2] || pts[j].y == bounds[3]) {
+				|| pts[j].x == bounds[2] || pts[j].y ==  bounds[3]) {
 				possibleEnds.push_back(pts[j]);
 			}
 		}

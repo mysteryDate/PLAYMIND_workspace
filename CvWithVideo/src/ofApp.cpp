@@ -3,8 +3,8 @@
 // There are dead spots on the video, this is the take
 #define LEFT_PAD	20
 #define RIGHT_PAD	35
-#define TOP_PAD		50
-#define BOTTOM_PAD	5
+#define TOP_PAD		70
+#define BOTTOM_PAD	10
 
 using namespace ofxCv;
 using namespace cv;
@@ -28,10 +28,12 @@ void ofApp::setup(){
 
     contourFinder.setMinAreaRadius(20);
 
-    int xMin = DISPLAY_WIDTH;
-	int yMin = DISPLAY_HEIGHT;
-	int xMax = 0;
-	int yMax = 0;
+    // int xMin = DISPLAY_WIDTH;
+	// int yMin = DISPLAY_HEIGHT;
+	// int xMax = 0;
+	// int yMax = 0;
+
+	contourFinder.setBounds(LEFT_PAD, TOP_PAD, DISPLAY_WIDTH - RIGHT_PAD, DISPLAY_HEIGHT - BOTTOM_PAD);
 
 }
 
@@ -44,7 +46,7 @@ void ofApp::update(){
 
 		colorImg.setFromPixels(movie.getPixels(), DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		grayImg = colorImg;
-        grayImg.setROI(LEFT_PAD, TOP_PAD, DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
+        // grayImg.setROI(LEFT_PAD, TOP_PAD, DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
 
 		unsigned char * pix = grayImg.getPixels();
 		
@@ -53,9 +55,17 @@ void ofApp::update(){
 		    if(pix[i] > nearThreshold or pix[i] < farThreshold) {
 		        pix[i] = 0;
 		    } 
+		    // Trim the image because I don't know how ROIs work
+		    if(i < TOP_PAD * DISPLAY_WIDTH || i > numPixels - (BOTTOM_PAD * DISPLAY_WIDTH) ||
+		    	i % DISPLAY_WIDTH < LEFT_PAD || i % DISPLAY_WIDTH > DISPLAY_WIDTH - RIGHT_PAD) {
+		    	pix[i] = 0;
+		    }
 		}
 
+        // grayImg.setROI(LEFT_PAD, TOP_PAD,  DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
 		contourFinder.findContours(grayImg);
+		//grayImg.resetROI();
+    
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
@@ -82,21 +92,22 @@ void ofApp::draw(){
 
 	movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	contourFinder.draw();
+	//contourFinder.draw();
 	RectTracker& tracker = contourFinder.getTracker();
 
-	drawLabels();
-	//drawEnds();
-    ofSetColor(255,255,255);
+	
+    
+    ofPushStyle();
+	ofSetColor(0, 255, 0);
+
     for (int i = 0; i < contourFinder.size(); i++) {
         vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
         for (int j = 0; j < line.size(); j++) {
-            ofCircle(line[i], 3);
+            ofCircle(line[j], 1);
         }
     }
 	
-	ofPushStyle();
-	ofSetColor(0, 255, 0);
+
 
 	stringstream reportStream;
 	reportStream;
@@ -115,6 +126,12 @@ void ofApp::draw(){
 
 	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 50);
 	ofPopStyle();
+    
+    drawLabels();
+	drawEnds();
+
+	//grayImg.drawROI(0,0);
+    //grayImg.resetROI();
 
 }
 
