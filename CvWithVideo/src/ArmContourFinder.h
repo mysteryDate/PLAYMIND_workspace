@@ -18,15 +18,17 @@ public:
 	vector< int > tipIndeces;
 	vector< vector < int > > wristIndeces;
 
+	vector< bool > handFound;
+
 	vector< ofPolyline > simplifiedPolylines;
 
 	void update();
 	void updateArm(int i);
 
 	// void findEnds();
-	void findEnd(int i);
-	void findTip(int i);
-	void findWrist(int i);
+	bool findEnd(int i);
+	bool findTip(int i);
+	bool findWrist(int i);
 
 	void setBounds(int xMin, int yMin, int xMax, int yMax );
 	void setTolerance(float tolerance);

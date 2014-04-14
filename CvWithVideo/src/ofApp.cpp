@@ -70,7 +70,15 @@ void ofApp::update(){
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			contourFinder.findEnd(i);
+			if(contourFinder.findEnd(i)) {
+				if(contourFinder.findTip(i)) {
+					if(contourFinder.findWrist(i)) {
+						contourFinder.handFound[i] = true;
+					}
+					else
+						contourFinder.handFound[i] = false;
+				}
+			}
 			// ofPolyline shape = contourFinder.getPolyline(i);
 			// for (int j = 0; j < shape.size(); ++j)
 			// {
@@ -92,6 +100,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+	ofClear(0,0,0);
 	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	contourFinder.draw();
@@ -103,18 +112,20 @@ void ofApp::draw(){
 	ofSetColor(0, 255, 0);
 
     for (int i = 0; i < contourFinder.size(); i++) {
-        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
-        ofCircle(contourFinder.tips[i], 3);
-        ofSetColor(255,0,0);
-        ofCircle(contourFinder.wrists[i][0], 3);
-        ofCircle(contourFinder.wrists[i][1], 3);
-	    ofSetColor(255, 255, 255);
-	    ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
-	    ofSetColor(0, 255, 0);
-	    contourFinder.simplifiedPolylines[i].draw();
-        for (int j = 0; j < line.size(); j++) {
-            //ofCircle(line[j], 1);
-        }
+    	if(contourFinder.handFound[i]) {
+	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
+	        //ofCircle(contourFinder.tips[i], 3);
+	        ofSetColor(255,0,0); 
+	        ofCircle(contourFinder.wrists[i][0], 3);
+	        ofCircle(contourFinder.wrists[i][1], 3);
+		    ofSetColor(255, 255, 255);
+		    // ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
+		    ofSetColor(0, 255, 0);
+		    contourFinder.simplifiedPolylines[i].draw();
+    	}
+    	ofPolyline hull = toOf(contourFinder.getConvexHull(i));
+    	//hull.addVertices(pts);
+    	//hull.draw();
     }
 
 

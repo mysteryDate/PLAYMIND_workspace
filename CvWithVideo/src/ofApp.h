@@ -32,6 +32,8 @@ class ofApp : public ofBaseApp{
 		ofxCvGrayscaleImage		grayImg;
 		ArmContourFinder	contourFinder;
 
+		ofxCv::ContourFinder 	hands;
+
 		//Maximum points of blobs (for testing)
 		int xMin;
 		int yMin;

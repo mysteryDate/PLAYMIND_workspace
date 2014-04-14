@@ -27,6 +27,8 @@ void ArmContourFinder::update() {
 	wristIndeces.resize(size);
 	tipIndeces.resize(size);
 
+	handFound.resize(size, false);
+
 	for (int i = 0; i < polylines.size(); ++i)
 	{
 		simplifiedPolylines[i] = polylines[i];
@@ -55,39 +57,7 @@ vector< int >& ArmContourFinder::getBounds() {
 	return bounds;
 }
 
-// void ArmContourFinder::findEnds() {
-
-// 	ends.clear();
-// 	ends.resize(polylines.size() );
-// 	for (int i = 0; i < polylines.size(); ++i)
-// 	{
-//         ofPolyline line = polylines[i].getVertices();
-//         //line.simplify(tolerance);
-// 		vector< ofPoint > pts = line.getVertices();
-// 		vector< ofPoint > possibleEnds;
-// 		vector< int > possibleEndIndeces;
-// 		ends[i].clear();
-// 		ends[i].resize(2);
-// 		for (int j = 0; j < pts.size(); ++j)
-// 		{
-// 			if(pts[j].x == bounds[0] || pts[j].y == bounds[1]
-// 				|| pts[j].x >= bounds[2] - 5 || pts[j].y >=  bounds[3] - 5) {
-// 				possibleEnds.push_back(pts[j]);
-// 				possibleEndIndeces.push_back(j);
-// 			}
-// 		}
-// 		if(possibleEnds.size() >= 2 ) {
-// 			//Set the actual ends the first and the last ones found
-// 			ends[i][0] = possibleEnds[0];
-// 			ends[i][1] = possibleEnds.back();
-// 			endIndeces[i][0] = possibleEndIndeces[0];
-// 			endIndeces[i][1] = possibleEndIndeces.back();
-// 			findTip(i);
-// 		}
-// 	}
-// }
-
-void ArmContourFinder::findEnd(int i) {
+bool ArmContourFinder::findEnd(int i) {
 
 	vector< ofPoint > pts = simplifiedPolylines[i].getVertices();
 	vector< ofPoint > possibleEnds;
@@ -107,13 +77,12 @@ void ArmContourFinder::findEnd(int i) {
 		ends[i][1] = possibleEnds.back();
 		polylines[i].getClosestPoint(ends[i][0], &endIndeces[i][0]);
 		polylines[i].getClosestPoint(ends[i][1], &endIndeces[i][1]);
-		findTip(i);
+		return true;
 	}
-
-
+	else return false; 
 }
 
-void ArmContourFinder::findTip(int i) {
+bool ArmContourFinder::findTip(int i) {
 
 	//Which direction has more points on it?
 	int a = endIndeces[i][1] - endIndeces[i][0];
@@ -131,13 +100,13 @@ void ArmContourFinder::findTip(int i) {
 			tipIndeces[i] = (b/2) + endIndeces[i][1];
 		}
 	}
-	tips[i] = pts[tipIndeces[i]];
-	findWrist(i);
+	tips[i] = simplifiedPolylines[i].getClosestPoint(pts[tipIndeces[i]]);
+	return true;
 
 
 }
 
-void ArmContourFinder::findWrist(int i) {
+bool ArmContourFinder::findWrist(int i) {
 
 	int method = 2;
 	wrists[i].resize(2);
@@ -188,6 +157,7 @@ void ArmContourFinder::findWrist(int i) {
 				wrists[i][1] = pts[nearestEnds[1] + 1];
 			}
 
+			return true;
 			break; 
 		}
 		
