@@ -8,7 +8,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
-#include "armBlob.h"
+//#include "armBlob.h"
 #include "ArmContourFinder.h"
 
 class ofApp : public ofBaseApp{
