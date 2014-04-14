@@ -70,15 +70,19 @@ void ofApp::update(){
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			if(contourFinder.findEnd(i)) {
-				if(contourFinder.findTip(i)) {
-					if(contourFinder.findWrist(i)) {
-						contourFinder.handFound[i] = true;
+			//if(contourFinder.handFound[i])
+			//	contourFinder.updateArm(i);
+			//else {
+				if(contourFinder.findEnd(i)) {
+					if(contourFinder.findTip(i)) {
+						if(contourFinder.findWrist(i)) {
+							contourFinder.handFound[i] = true;
+						}
+						else
+							contourFinder.handFound[i] = false;
 					}
-					else
-						contourFinder.handFound[i] = false;
 				}
-			}
+			//}
 			// ofPolyline shape = contourFinder.getPolyline(i);
 			// for (int j = 0; j < shape.size(); ++j)
 			// {
@@ -101,9 +105,9 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofClear(0,0,0);
-	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	contourFinder.draw();
+	//contourFinder.draw();
 	RectTracker& tracker = contourFinder.getTracker();
 
 	
@@ -114,22 +118,29 @@ void ofApp::draw(){
     for (int i = 0; i < contourFinder.size(); i++) {
     	if(contourFinder.handFound[i]) {
 	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
-	        //ofCircle(contourFinder.tips[i], 3);
+		    ofSetColor(255, 255, 255);
+	        ofCircle(contourFinder.tips[i], 3);
 	        ofSetColor(255,0,0); 
 	        ofCircle(contourFinder.wrists[i][0], 3);
 	        ofCircle(contourFinder.wrists[i][1], 3);
-		    ofSetColor(255, 255, 255);
 		    // ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
-		    ofSetColor(0, 255, 0);
-		    contourFinder.simplifiedPolylines[i].draw();
+		    ofSetColor(0, 255, 255);
+		    ofFill();
+		    contourFinder.hands[i].draw();
+		    ofNoFill();
     	}
+	    ofSetColor(0, 255, 0);
+	    contourFinder.simplifiedPolylines[i].draw();
     	ofPolyline hull = toOf(contourFinder.getConvexHull(i));
-    	//hull.addVertices(pts);
     	//hull.draw();
     }
 
-
-	
+	vector<cv::Vec4i> defects;
+	int simpPoints;
+    if(contourFinder.size() != 0) {
+		defects = contourFinder.getConvexityDefects(0);
+		simpPoints = contourFinder.simplifiedPolylines[0].size();
+	}
 
 
 	stringstream reportStream;
@@ -141,13 +152,19 @@ void ofApp::draw(){
 	// << "xMax: " << xMax << endl
 	// << "yMax: " << yMax << endl
 	// << "xMin: " << xMin << endl
-	// << "yMin: " << yMin << endl;
+	// << "yMin: " << yMin << endl
+	// << "#Defects: " << defects.size() << endl
+	<< "Simplified points " << simpPoints << endl
 	<< "Frame: " << movie.getCurrentFrame() << endl;
+	if(simpPoints > 9) {
+		reportStream << "Hand is spread!" << endl;
+	}
 
 	ofNoFill();
 	vector< int > bounds = contourFinder.getBounds();
 	//ofRect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
 
+	ofSetColor(255, 255, 255);
 	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 50);
 	ofPopStyle();
     

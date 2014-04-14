@@ -28,6 +28,7 @@ void ArmContourFinder::update() {
 	tipIndeces.resize(size);
 
 	handFound.resize(size, false);
+	hands.resize(size);
 
 	for (int i = 0; i < polylines.size(); ++i)
 	{
@@ -40,6 +41,24 @@ void ArmContourFinder::update() {
 void ArmContourFinder::updateArm(int i) {
 
 	//For detected arms
+	ofPoint * keypoints[] = {&ends[i][0], &ends[i][1], &tips[i], &wrists[i][0], &wrists[i][1]};
+
+	ofPoint nearest[5];
+	float distances[5];
+	int MAX_DISTANCE = 500;
+	
+	for (int j = 0; j < 5; ++j)
+	{
+		unsigned int vertexIndex;
+		simplifiedPolylines[i].getClosestPoint(*keypoints[j], &vertexIndex);
+		nearest[j] = simplifiedPolylines[i][vertexIndex];
+		distances[j] = ofDistSquared(nearest[j].x, nearest[j].y, keypoints[j]->x, keypoints[j]->y);
+		if(distances[j] <= MAX_DISTANCE) {
+			*keypoints[j] = nearest[j];
+		}
+		else
+			handFound[i] = false;
+	}
 }
 
 void ArmContourFinder::setBounds(int  xMin, int yMin, int xMax, int yMax ) {
@@ -67,7 +86,7 @@ bool ArmContourFinder::findEnd(int i) {
 
 	for (int i = 0; i < pts.size(); ++i)
 	{
-		if(pts[i].x == bounds[0] || pts[i].y == bounds[1]
+		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 10
 			|| pts[i].x >= bounds[2] - 5 || pts[i].y >=  bounds[3] - 5) {
 			possibleEnds.push_back(pts[i]);
 		}
@@ -100,7 +119,10 @@ bool ArmContourFinder::findTip(int i) {
 			tipIndeces[i] = (b/2) + endIndeces[i][1];
 		}
 	}
-	tips[i] = simplifiedPolylines[i].getClosestPoint(pts[tipIndeces[i]]);
+	unsigned int fullIndex;
+	//tips[i] = simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]] );
+	simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]], &fullIndex );
+	tips[i] = simplifiedPolylines[i].getVertices()[fullIndex];
 	return true;
 
 
@@ -151,39 +173,39 @@ bool ArmContourFinder::findWrist(int i) {
 			if(a > b) {
 				wrists[i][0] = pts[nearestEnds[0] + 1];
 				wrists[i][1] = pts[nearestEnds[1] - 1];
+				polylines[i].getClosestPoint(wrists[i][0], &wristIndeces[i][0]);
+				polylines[i].getClosestPoint(wrists[i][1], &wristIndeces[i][1]);
 			}
 			else {
 				wrists[i][0] = pts[nearestEnds[0] - 1];
 				wrists[i][1] = pts[nearestEnds[1] + 1];
+				polylines[i].getClosestPoint(wrists[i][0], &wristIndeces[i][0]);
+				polylines[i].getClosestPoint(wrists[i][1], &wristIndeces[i][1]);
 			}
 
+			hands[i].clear();			
+			pts = polylines[i].getVertices();
+			if(tipIndeces[i] > wristIndeces[i][0] && tipIndeces[i] < wristIndeces[i][1]) {
+				for (int j = wristIndeces[i][0]; j < wristIndeces[i][1]; ++j)
+				{
+					hands[i].addVertex(pts[j]);
+				}
+				hands[i].addVertex(pts[wristIndeces[i][0]]);
+			}
+			else {
+				for (int j = 0; j < wristIndeces[i][0]; ++j)
+				{
+					hands[i].addVertex(pts[j]);
+				}
+				for (int j = wristIndeces[i][1]; j < pts.size(); ++j)
+				{
+					hands[i].addVertex(pts[j]);
+				}
+			}
+			// if(hands[i].getArea() <= MAX_HAND_SIZE && hands[i].getArea >= MIN_HAND_SIZE) {
+			// }
+			//cout << hands[i].getArea() << endl;
 			return true;
-			break; 
-		}
-		
+		}	
 	}
-
-
-
 }
-
-// void ArmContourFinder::findArms() {
-
-// 	for (int i = 0; i < polylines.size(); ++i)
-// 	{
-// 		// We don't have the right ends
-// 		if(ends[i].size() != 2) {
-// 			//find ends, if successful
-// 			//find tip/wrists
-// 			//else continue
-// 		}
-// 		else {
-// 			// We have one tip
-// 			if(tip[i].size() != 1) {
-
-// 			}
-// 			if(wrists[i].size() != 2) {}
-// 		}
-// 	}
-
-// }

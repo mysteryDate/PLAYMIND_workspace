@@ -15,12 +15,13 @@ public:
 
 	// Not the best way to do this, but it'll do for now
 	vector< vector < unsigned int > > endIndeces;
-	vector< int > tipIndeces;
-	vector< vector < int > > wristIndeces;
+	vector< unsigned int > tipIndeces;
+	vector< vector < unsigned int > > wristIndeces;
 
 	vector< bool > handFound;
 
 	vector< ofPolyline > simplifiedPolylines;
+	vector< ofPolyline > hands;
 
 	void update();
 	void updateArm(int i);
