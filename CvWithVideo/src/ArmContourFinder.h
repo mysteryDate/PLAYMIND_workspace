@@ -8,10 +8,22 @@ public:
 	ArmContourFinder();
 
 	vector< vector< ofPoint > > ends;
-	vector< ofPoint > wrists[2];
+	vector< ofPoint > tips;
+	vector< vector< ofPoint > > wrists;
+
+	// Not the best way to do this, but it'll do for now
+	vector< vector < int > > endIndeces;
+	vector< int > tipIndeces;
+	vector< vector < int > > wristIndeces;
+
 	vector< ofPolyline > simplifiedPolylines;
 
+	void update();
+	void updateArm(int i);
+
 	void findEnds();
+	void findTip(int i);
+	void findWrist(int i);
 
 	void setBounds(int xMin, int yMin, int xMax, int yMax );
 	void setTolerance(float tolerance);

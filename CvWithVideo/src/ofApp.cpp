@@ -64,6 +64,7 @@ void ofApp::update(){
 
         // grayImg.setROI(LEFT_PAD, TOP_PAD,  DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
 		contourFinder.findContours(grayImg);
+		contourFinder.update();
 		//grayImg.resetROI();
     
 
@@ -90,9 +91,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	//contourFinder.draw();
+	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	contourFinder.draw();
 	RectTracker& tracker = contourFinder.getTracker();
 
 	
@@ -102,15 +103,17 @@ void ofApp::draw(){
 
     for (int i = 0; i < contourFinder.size(); i++) {
         vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
+        ofCircle(contourFinder.tips[i], 3);
         for (int j = 0; j < line.size(); j++) {
-            ofCircle(line[j], 1);
+            //ofCircle(line[j], 1);
         }
     }
 	
 
 
 	stringstream reportStream;
-	reportStream;
+	if(bPlaying)	reportStream << "Framerate: " << ofGetFrameRate() << endl;
+	reportStream
 	// << "Near threshold: " << nearThreshold << endl
 	// << "Far threshold: " << farThreshold << endl
 	// << "Tolerance: " << tolerance << endl
@@ -118,7 +121,7 @@ void ofApp::draw(){
 	// << "yMax: " << yMax << endl
 	// << "xMin: " << xMin << endl
 	// << "yMin: " << yMin << endl;
-	if(bPlaying)	reportStream << "Framerate: " << ofGetFrameRate() << endl;
+	<< "Frame: " << movie.getCurrentFrame() << endl;
 
 	ofNoFill();
 	vector< int > bounds = contourFinder.getBounds();
