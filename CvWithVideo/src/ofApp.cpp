@@ -106,10 +106,15 @@ void ofApp::draw(){
         ofCircle(contourFinder.tips[i], 3);
         ofCircle(contourFinder.wrists[i][0], 3);
         ofCircle(contourFinder.wrists[i][1], 3);
+	    ofSetColor(255, 255, 255);
+	    ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
+	    ofSetColor(0, 255, 0);
         for (int j = 0; j < line.size(); j++) {
             //ofCircle(line[j], 1);
         }
     }
+
+
 	
 
 

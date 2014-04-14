@@ -27,6 +27,12 @@ void ArmContourFinder::update() {
 	wristIndeces.resize(size);
 	tipIndeces.resize(size);
 
+	// for (int i = 0; i < polylines.size(); ++i)
+	// {
+	// 	simplifiedPolylines = polylines[i];
+	// 	simplifiedPolylines.simplify(tolerance);
+	// }
+
 }
 
 void ArmContourFinder::updateArm(int i) {
@@ -107,34 +113,60 @@ void ArmContourFinder::findTip(int i) {
 
 void ArmContourFinder::findWrist(int i) {
 
-	int pushBack = 50; // Amount of verteces we go back for the wrist
+	int method = 2;
 	wrists[i].resize(2);
 	wristIndeces[i].resize(2);
 
-	int a = tipIndeces[i] - pushBack;
-	int b = tipIndeces[i] + pushBack;
+	switch(method) {
+		case 1: { //Pushback method
+			int pushBack = 50; // Amount of verteces we go back for the wrist
 
-	if(a < 0) {
-		a += polylines[i].size();
+			int a = tipIndeces[i] - pushBack;
+			int b = tipIndeces[i] + pushBack;
+
+			if(a < 0) {
+				a += polylines[i].size();
+			}
+			if(b > polylines[i].size()) {
+				b -= polylines[i].size();
+			}
+
+			wristIndeces[i][0] = a;
+			wristIndeces[i][1] = b;
+			wrists[i][0] = polylines[i].getVertices()[a];
+			wrists[i][1] = polylines[i].getVertices()[b];
+			break; 
+		}
+
+		case 2: {// Next simplified vertex method
+			simplifiedPolylines[i] = polylines[i];
+			simplifiedPolylines[i].simplify(tolerance);
+			vector< ofPoint > pts = simplifiedPolylines[i].getVertices();
+
+			unsigned int nearestEnds[2];
+			simplifiedPolylines[i].getClosestPoint(ends[i][0], &nearestEnds[0]);
+			simplifiedPolylines[i].getClosestPoint(ends[i][1], &nearestEnds[1]);
+
+			unsigned int nearestTip;
+			simplifiedPolylines[i].getClosestPoint(tips[i], &nearestTip);
+
+			int a = nearestEnds[1] - nearestEnds[0];
+			int b = pts.size() - a;
+
+			if(a > b) {
+				wrists[i][0] = pts[nearestEnds[0] + 1];
+				wrists[i][1] = pts[nearestEnds[1] - 1];
+			}
+			else {
+				wrists[i][0] = pts[nearestEnds[0] - 1];
+				wrists[i][1] = pts[nearestEnds[1] + 1];
+			}
+
+			break; 
+		}
+		
 	}
-	if(b > polylines[i].size()) {
-		b -= polylines[i].size();
-	}
 
-	wristIndeces[i][0] = a;
-	wristIndeces[i][1] = b;
-	wrists[i][0] = polylines[i].getVertices()[a];
-	wrists[i][1] = polylines[i].getVertices()[b];
-
-	// simplifiedPolylines[i] = polylines[i].getVertices();
-	// simplifiedPolylines[i].simplify(tolerance);
-
-	// unsigned int* nearestEnds[2];
-	// simplifiedPolylines[i].getClosestPoint(ends[i][0], *nearestEnds[0]);
-	// simplifiedPolylines[i].getClosestPoint(ends[i][1], *nearestEnds[1]);
-
-	// unsigned int nearestTip;
-	// simplifiedPolylines[i].getClosestPoint(tips[i], *nearestTip);
 
 
 }
