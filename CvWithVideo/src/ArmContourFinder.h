@@ -1,3 +1,5 @@
+#define MAXIMUM_DISTANCE 10
+
 #include "ContourFinder.h"
 #include "ofMain.h"
 
@@ -12,7 +14,7 @@ public:
 	vector< vector< ofPoint > > wrists;
 
 	// Not the best way to do this, but it'll do for now
-	vector< vector < int > > endIndeces;
+	vector< vector < unsigned int > > endIndeces;
 	vector< int > tipIndeces;
 	vector< vector < int > > wristIndeces;
 
@@ -21,7 +23,8 @@ public:
 	void update();
 	void updateArm(int i);
 
-	void findEnds();
+	// void findEnds();
+	void findEnd(int i);
 	void findTip(int i);
 	void findWrist(int i);
 

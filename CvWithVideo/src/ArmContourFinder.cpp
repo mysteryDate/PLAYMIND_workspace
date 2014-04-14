@@ -27,11 +27,11 @@ void ArmContourFinder::update() {
 	wristIndeces.resize(size);
 	tipIndeces.resize(size);
 
-	// for (int i = 0; i < polylines.size(); ++i)
-	// {
-	// 	simplifiedPolylines = polylines[i];
-	// 	simplifiedPolylines.simplify(tolerance);
-	// }
+	for (int i = 0; i < polylines.size(); ++i)
+	{
+		simplifiedPolylines[i] = polylines[i];
+		simplifiedPolylines[i].simplify(tolerance);
+	}
 
 }
 
@@ -55,36 +55,62 @@ vector< int >& ArmContourFinder::getBounds() {
 	return bounds;
 }
 
-void ArmContourFinder::findEnds() {
+// void ArmContourFinder::findEnds() {
 
-	ends.clear();
-	ends.resize(polylines.size() );
-	for (int i = 0; i < polylines.size(); ++i)
+// 	ends.clear();
+// 	ends.resize(polylines.size() );
+// 	for (int i = 0; i < polylines.size(); ++i)
+// 	{
+//         ofPolyline line = polylines[i].getVertices();
+//         //line.simplify(tolerance);
+// 		vector< ofPoint > pts = line.getVertices();
+// 		vector< ofPoint > possibleEnds;
+// 		vector< int > possibleEndIndeces;
+// 		ends[i].clear();
+// 		ends[i].resize(2);
+// 		for (int j = 0; j < pts.size(); ++j)
+// 		{
+// 			if(pts[j].x == bounds[0] || pts[j].y == bounds[1]
+// 				|| pts[j].x >= bounds[2] - 5 || pts[j].y >=  bounds[3] - 5) {
+// 				possibleEnds.push_back(pts[j]);
+// 				possibleEndIndeces.push_back(j);
+// 			}
+// 		}
+// 		if(possibleEnds.size() >= 2 ) {
+// 			//Set the actual ends the first and the last ones found
+// 			ends[i][0] = possibleEnds[0];
+// 			ends[i][1] = possibleEnds.back();
+// 			endIndeces[i][0] = possibleEndIndeces[0];
+// 			endIndeces[i][1] = possibleEndIndeces.back();
+// 			findTip(i);
+// 		}
+// 	}
+// }
+
+void ArmContourFinder::findEnd(int i) {
+
+	vector< ofPoint > pts = simplifiedPolylines[i].getVertices();
+	vector< ofPoint > possibleEnds;
+	vector< int > possibleEndIndeces;
+	ends[i].clear();
+	ends[i].resize(2);
+
+	for (int i = 0; i < pts.size(); ++i)
 	{
-        ofPolyline line = polylines[i].getVertices();
-        //line.simplify(tolerance);
-		vector< ofPoint > pts = line.getVertices();
-		vector< ofPoint > possibleEnds;
-		vector< int > possibleEndIndeces;
-		ends[i].clear();
-		ends[i].resize(2);
-		for (int j = 0; j < pts.size(); ++j)
-		{
-			if(pts[j].x == bounds[0] || pts[j].y == bounds[1]
-				|| pts[j].x >= bounds[2] - 5 || pts[j].y >=  bounds[3] - 5) {
-				possibleEnds.push_back(pts[j]);
-				possibleEndIndeces.push_back(j);
-			}
-		}
-		if(possibleEnds.size() >= 2 ) {
-			//Set the actual ends the first and the last ones found
-			ends[i][0] = possibleEnds[0];
-			ends[i][1] = possibleEnds.back();
-			endIndeces[i][0] = possibleEndIndeces[0];
-			endIndeces[i][1] = possibleEndIndeces.back();
-			findTip(i);
+		if(pts[i].x == bounds[0] || pts[i].y == bounds[1]
+			|| pts[i].x >= bounds[2] - 5 || pts[i].y >=  bounds[3] - 5) {
+			possibleEnds.push_back(pts[i]);
 		}
 	}
+	if(possibleEnds.size() >= 2) {
+		ends[i][0] = possibleEnds[0];
+		ends[i][1] = possibleEnds.back();
+		polylines[i].getClosestPoint(ends[i][0], &endIndeces[i][0]);
+		polylines[i].getClosestPoint(ends[i][1], &endIndeces[i][1]);
+		findTip(i);
+	}
+
+
 }
 
 void ArmContourFinder::findTip(int i) {
@@ -139,8 +165,8 @@ void ArmContourFinder::findWrist(int i) {
 		}
 
 		case 2: {// Next simplified vertex method
-			simplifiedPolylines[i] = polylines[i];
-			simplifiedPolylines[i].simplify(tolerance);
+			//simplifiedPolylines[i] = polylines[i];
+			//simplifiedPolylines[i].simplify(tolerance);
 			vector< ofPoint > pts = simplifiedPolylines[i].getVertices();
 
 			unsigned int nearestEnds[2];

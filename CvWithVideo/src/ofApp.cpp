@@ -70,19 +70,20 @@ void ofApp::update(){
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			ofPolyline shape = contourFinder.getPolyline(i);
-			for (int j = 0; j < shape.size(); ++j)
-			{
-				if(shape[j].x < xMin) xMin = shape[j].x;
-				if(shape[j].x > xMax) xMax = shape[j].x;
-				if(shape[j].y < yMin) yMin = shape[j].y;
-				if(shape[j].y > yMax) yMax = shape[j].y;
-			}
+			contourFinder.findEnd(i);
+			// ofPolyline shape = contourFinder.getPolyline(i);
+			// for (int j = 0; j < shape.size(); ++j)
+			// {
+			// 	if(shape[j].x < xMin) xMin = shape[j].x;
+			// 	if(shape[j].x > xMax) xMax = shape[j].x;
+			// 	if(shape[j].y < yMin) yMin = shape[j].y;
+			// 	if(shape[j].y > yMax) yMax = shape[j].y;
+			// }
 		}
 
 		// cout << xMin << endl << yMin << endl << xMax << endl << yMax << endl;
 
-		contourFinder.findEnds();
+		//contourFinder.findEnds();
 
 	}
 
@@ -104,11 +105,13 @@ void ofApp::draw(){
     for (int i = 0; i < contourFinder.size(); i++) {
         vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
         ofCircle(contourFinder.tips[i], 3);
+        ofSetColor(255,0,0);
         ofCircle(contourFinder.wrists[i][0], 3);
         ofCircle(contourFinder.wrists[i][1], 3);
 	    ofSetColor(255, 255, 255);
 	    ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
 	    ofSetColor(0, 255, 0);
+	    contourFinder.simplifiedPolylines[i].draw();
         for (int j = 0; j < line.size(); j++) {
             //ofCircle(line[j], 1);
         }
