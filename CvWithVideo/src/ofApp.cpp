@@ -44,6 +44,8 @@ void ofApp::update(){
 
 	if(movie.isFrameNew() ) {
 
+		flow.calcOpticalFlow(movie);
+
 		colorImg.setFromPixels(movie.getPixels(), DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		grayImg = colorImg;
         // grayImg.setROI(LEFT_PAD, TOP_PAD, DISPLAY_WIDTH - LEFT_PAD - RIGHT_PAD, DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD);
@@ -105,43 +107,52 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofClear(0,0,0);
-	movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	//contourFinder.draw();
-	RectTracker& tracker = contourFinder.getTracker();
-
+	contourFinder.draw();
 	
+
     
     ofPushStyle();
 	ofSetColor(0, 255, 0);
 
     for (int i = 0; i < contourFinder.size(); i++) {
     	if(contourFinder.handFound[i]) {
+
+    		
+
 	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
 		    ofSetColor(255, 255, 255);
-	        ofCircle(contourFinder.tips[i], 3);
+	        // ofCircle(contourFinder.tips[i], 3);
 	        ofSetColor(255,0,0); 
-	        ofCircle(contourFinder.wrists[i][0], 3);
-	        ofCircle(contourFinder.wrists[i][1], 3);
+	        // ofCircle(contourFinder.wrists[i][0], 3);
+	        // ofCircle(contourFinder.wrists[i][1], 3);
 		    // ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
 		    ofSetColor(0, 255, 255);
 		    ofFill();
-		    contourFinder.hands[i].draw();
+		    //contourFinder.hands[i].draw();
 		    ofNoFill();
     	}
 	    ofSetColor(0, 255, 0);
-	    contourFinder.simplifiedPolylines[i].draw();
-    	ofPolyline hull = toOf(contourFinder.getConvexHull(i));
+
+	    features = flow.getFeatures();
+	    for (int j = 0; j < features.size(); ++j)
+	    {
+	    	ofCircle(features[j], 3);
+	    }
+	    //contourFinder.simplifiedPolylines[i].draw();
+    	//ofPolyline hull = toOf(contourFinder.getConvexHull(i));
     	//hull.draw();
     }
 
 	vector<cv::Vec4i> defects;
-	int simpPoints;
+	int simpPoints = 0;
     if(contourFinder.size() != 0) {
 		defects = contourFinder.getConvexityDefects(0);
 		simpPoints = contourFinder.simplifiedPolylines[0].size();
 	}
 
+	flow.draw();
 
 	stringstream reportStream;
 	if(bPlaying)	reportStream << "Framerate: " << ofGetFrameRate() << endl;
@@ -259,6 +270,16 @@ void ofApp::keyPressed(int key){
         case OF_KEY_LEFT:
             if(!bPlaying) movie.previousFrame();
             break;
+
+        case 'T':
+        	//Features to track?
+        	vector< ofVec2f > feat;
+        	feat.resize(2);
+        	feat[0].set(contourFinder.wrists[0][0].x, contourFinder.wrists[0][0].y);
+        	feat[1].set(contourFinder.wrists[0][1].x, contourFinder.wrists[0][1].y);
+
+        	flow.setFeaturesToTrack(feat);
+        	break;
 
 	}
 
