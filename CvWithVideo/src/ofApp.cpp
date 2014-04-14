@@ -104,6 +104,8 @@ void ofApp::draw(){
     for (int i = 0; i < contourFinder.size(); i++) {
         vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
         ofCircle(contourFinder.tips[i], 3);
+        ofCircle(contourFinder.wrists[i][0], 3);
+        ofCircle(contourFinder.wrists[i][1], 3);
         for (int j = 0; j < line.size(); j++) {
             //ofCircle(line[j], 1);
         }

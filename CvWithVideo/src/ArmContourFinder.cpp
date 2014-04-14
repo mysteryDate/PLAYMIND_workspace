@@ -100,6 +100,7 @@ void ArmContourFinder::findTip(int i) {
 		}
 	}
 	tips[i] = pts[tipIndeces[i]];
+	findWrist(i);
 
 
 }
@@ -107,9 +108,23 @@ void ArmContourFinder::findTip(int i) {
 void ArmContourFinder::findWrist(int i) {
 
 	int pushBack = 50; // Amount of verteces we go back for the wrist
+	wrists[i].resize(2);
+	wristIndeces[i].resize(2);
 
-	int a = tipIndeces[i] + pushBack;
-	int b = tipIndeces[i] - pushBack;
+	int a = tipIndeces[i] - pushBack;
+	int b = tipIndeces[i] + pushBack;
+
+	if(a < 0) {
+		a += polylines[i].size();
+	}
+	if(b > polylines[i].size()) {
+		b -= polylines[i].size();
+	}
+
+	wristIndeces[i][0] = a;
+	wristIndeces[i][1] = b;
+	wrists[i][0] = polylines[i].getVertices()[a];
+	wrists[i][1] = polylines[i].getVertices()[b];
 
 	// simplifiedPolylines[i] = polylines[i].getVertices();
 	// simplifiedPolylines[i].simplify(tolerance);
