@@ -32,7 +32,7 @@ public:
 	// void findEnds();
 	vector< ofPoint > findEnds(int n);
 	ofPoint findTip(int n);
-	bool findWrist(int n);
+	vector< ofPoint > findWrist(int n, ofPoint newTip);
 	void findHand(int n);
 
 	void setBounds(int xMin, int yMin, int xMax, int yMax );
@@ -47,5 +47,11 @@ private:
 	vector< int > bounds;
 
 	float tolerance;
+	float SMOOTHING_RATE;
+
+	int MIN_HAND_SIZE;
+	int MAX_HAND_SIZE;
+	int MAX_MOVEMENT_DISTANCE;
+	int SURVIVAL_FRAMES;
 
 };
