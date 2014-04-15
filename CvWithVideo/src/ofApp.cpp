@@ -25,7 +25,7 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(0,0,0);
 
-	hand_radius = 50;
+	hand_radius = 110;
 
 	// tolerance = 9;
 
@@ -129,6 +129,7 @@ void ofApp::draw(){
 	        ofCircle(contourFinder.tips[i], 3);
 	        ofNoFill();
 	        //ofCircle(contourFinder.tips[i], hand_radius);
+	        //ofCircle(contourFinder.tips[i], hand_radius - 40);
 	        ofFill();
 	        ofSetColor(255,0,0); 
 	        // ofCircle(contourFinder.wrists[i][0], 3);

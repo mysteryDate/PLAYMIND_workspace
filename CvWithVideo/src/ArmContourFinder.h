@@ -28,8 +28,8 @@ public:
 
 	// void findEnds();
 	bool findEnd(int i);
-	bool findTip(int i);
-	bool findWrist(int i);
+	ofPoint findTip(int i);
+	ofPoint findWrist(int i);
 
 	void setBounds(int xMin, int yMin, int xMax, int yMax );
 	void setTolerance(float tolerance);

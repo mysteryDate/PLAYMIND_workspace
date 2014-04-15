@@ -101,7 +101,7 @@ bool ArmContourFinder::findEnd(int i) {
 	else return false; 
 }
 
-bool ArmContourFinder::findTip(int i) {
+ofPoint ArmContourFinder::findTip(int i) {
 
 	// //Which direction has more points on it?
 	// int a = endIndeces[i][1] - endIndeces[i][0];
@@ -135,12 +135,7 @@ bool ArmContourFinder::findTip(int i) {
 	float xn = (yn - baseCenter.y) / m + baseCenter.x;
 	ofPoint mostDistant = ofPoint(xn, yn);
 
-	unsigned int simplifiedIndex, fullIndex;
-	tips[i] = simplifiedPolylines[i].getClosestPoint(mostDistant, &simplifiedIndex);
-	polylines[i].getClosestPoint(tips[i], &fullIndex);
-
-	return true;
-
+	return simplifiedPolylines[i].getClosestPoint(mostDistant);
 
 }
 
@@ -223,5 +218,9 @@ bool ArmContourFinder::findWrist(int i) {
 			//cout << hands[i].getArea() << endl;
 			return true;
 		}	
+
+		case 3: { //distance from tip method
+
+		}
 	}
 }
