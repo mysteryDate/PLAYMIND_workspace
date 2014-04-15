@@ -44,5 +44,7 @@ class ofApp : public ofBaseApp{
 
 		//Tracked features
 		vector<ofPoint> features;
+
+		int hand_radius;
 		
 };

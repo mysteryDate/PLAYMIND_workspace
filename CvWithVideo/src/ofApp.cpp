@@ -6,6 +6,7 @@
 #define TOP_PAD		70
 #define BOTTOM_PAD	10
 
+
 using namespace ofxCv;
 using namespace cv;
 
@@ -23,6 +24,8 @@ void ofApp::setup(){
 
 	ofSetFrameRate(60);
 	ofBackground(0,0,0);
+
+	hand_radius = 50;
 
 	// tolerance = 9;
 
@@ -109,7 +112,7 @@ void ofApp::draw(){
 	ofClear(0,0,0);
 	//movie.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	//grayImg.draw(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	contourFinder.draw();
+	//contourFinder.draw();
 	
 
     
@@ -120,41 +123,68 @@ void ofApp::draw(){
     	if(contourFinder.handFound[i]) {
 
     		
-
+    		ofPolyline rt;
 	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
 		    ofSetColor(255, 255, 255);
-	        // ofCircle(contourFinder.tips[i], 3);
+	        ofCircle(contourFinder.tips[i], 3);
+	        ofNoFill();
+	        //ofCircle(contourFinder.tips[i], hand_radius);
+	        ofFill();
 	        ofSetColor(255,0,0); 
-	        // ofCircle(contourFinder.wrists[i][0], 3);
-	        // ofCircle(contourFinder.wrists[i][1], 3);
-		    // ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
-		    ofSetColor(0, 255, 255);
-		    ofFill();
+	        ofCircle(contourFinder.wrists[i][0], 3);
+	        ofCircle(contourFinder.wrists[i][1], 3);
+		    //ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
+	 	    ofSetColor(0, 255, 255);
+	 	    ofPoint pt = toOf(contourFinder.getCentroid(i));
+	 	    ofCircle(pt, 3);
+	 	    ofSetColor(255, 255, 0);
+	 	    pt = toOf(contourFinder.getCenter(i));
+	 	    ofCircle(pt, 3);
+	 	    ofPoint cen = ofPoint((contourFinder.ends[i][0].x + contourFinder.ends[i][1].x)/2, (contourFinder.ends[i][0].y + contourFinder.ends[i][1].y)/2);
+			float m = (pt.y - cen.y) / (pt.x - cen.x);
+			float xn = (5000 - cen.y) / m + cen.x;
+			ofLine(cen.x, cen.y, xn, 5000);
+	 	    // rt = toOf(contourFinder.getMinAreaRect(i));
+	 	    // rt.draw();
+	 	    // rt = toOf(contourFinder.getFitQuad(i));
+	 	    // ofSetColor(255, 0, 255);
+	 	    // rt.draw();
+	 	    // rt = toOf(contourFinder.getFitEllipse(i));
+	 	    // ofSetColor(0,0,255);
+	 	    // rt.draw();  
+	 	    // ofSetColor(255,50,255);
+	 	    // rt = toOf(contourFinder.getConvexHull(i));
+	 	    // rt.draw();
 		    //contourFinder.hands[i].draw();
-		    ofNoFill();
     	}
 	    ofSetColor(0, 255, 0);
 
-	    features = flow.getFeatures();
+	    //features = flow.getFeatures();
 	    for (int j = 0; j < features.size(); ++j)
 	    {
 	    	ofCircle(features[j], 3);
 	    }
-	    //contourFinder.simplifiedPolylines[i].draw();
+	    contourFinder.simplifiedPolylines[i].draw();
     	//ofPolyline hull = toOf(contourFinder.getConvexHull(i));
     	//hull.draw();
     }
+	stringstream reportStream;
 
 	vector<cv::Vec4i> defects;
+	ofPoint centroid;
+	ofPoint center;
 	int simpPoints = 0;
     if(contourFinder.size() != 0) {
 		defects = contourFinder.getConvexityDefects(0);
 		simpPoints = contourFinder.simplifiedPolylines[0].size();
+		ofPoint centroid = toOf(contourFinder.getCentroid(0));
+		ofPoint center = toOf(contourFinder.getCenter(0));\
+		reportStream << "Distance of centers: " << ofDist(centroid.x, centroid.y, center.x, center.y) << endl;
 	}
 
-	flow.draw();
+	//flow.draw();
 
-	stringstream reportStream;
+
 	if(bPlaying)	reportStream << "Framerate: " << ofGetFrameRate() << endl;
 	reportStream
 	// << "Near threshold: " << nearThreshold << endl
@@ -166,6 +196,7 @@ void ofApp::draw(){
 	// << "yMin: " << yMin << endl
 	// << "#Defects: " << defects.size() << endl
 	<< "Simplified points " << simpPoints << endl
+	<< "Hand radius: " << hand_radius << endl
 	<< "Frame: " << movie.getCurrentFrame() << endl;
 	if(simpPoints > 9) {
 		reportStream << "Hand is spread!" << endl;
@@ -176,7 +207,7 @@ void ofApp::draw(){
 	//ofRect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
 
 	ofSetColor(255, 255, 255);
-	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 50);
+	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 80);
 	ofPopStyle();
     
     drawLabels();
@@ -271,7 +302,7 @@ void ofApp::keyPressed(int key){
             if(!bPlaying) movie.previousFrame();
             break;
 
-        case 'T':
+        case 'T': {
         	//Features to track?
         	vector< ofVec2f > feat;
         	feat.resize(2);
@@ -279,6 +310,14 @@ void ofApp::keyPressed(int key){
         	feat[1].set(contourFinder.wrists[0][1].x, contourFinder.wrists[0][1].y);
 
         	flow.setFeaturesToTrack(feat);
+        	break; }
+
+        case 'H':
+        	hand_radius++;
+        	break;
+
+        case 'h':
+        	hand_radius--;
         	break;
 
 	}

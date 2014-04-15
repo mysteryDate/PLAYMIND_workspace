@@ -78,7 +78,7 @@ vector< int >& ArmContourFinder::getBounds() {
 
 bool ArmContourFinder::findEnd(int i) {
 
-	vector< ofPoint > pts = simplifiedPolylines[i].getVertices();
+	vector< ofPoint > pts = polylines[i].getVertices();
 	vector< ofPoint > possibleEnds;
 	vector< int > possibleEndIndeces;
 	ends[i].clear();
@@ -86,8 +86,8 @@ bool ArmContourFinder::findEnd(int i) {
 
 	for (int i = 0; i < pts.size(); ++i)
 	{
-		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 10
-			|| pts[i].x >= bounds[2] - 5 || pts[i].y >=  bounds[3] - 5) {
+		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 2
+			|| pts[i].x >= bounds[2] - 2 || pts[i].y >=  bounds[3] - 2) {
 			possibleEnds.push_back(pts[i]);
 		}
 	}
