@@ -13,6 +13,9 @@ public:
 	vector< ofPoint > tips;
 	vector< vector< ofPoint > > wrists;
 
+	// Matrix of how many skips have happened, first dimension is id, then end1, end2, tip
+	vector< vector< int > > skippedFrames;
+
 	// Not the best way to do this, but it'll do for now
 	vector< vector < unsigned int > > endIndeces;
 	vector< unsigned int > tipIndeces;
@@ -24,12 +27,13 @@ public:
 	vector< ofPolyline > hands;
 
 	void update();
-	void updateArm(int i);
+	void updateArm(int n);
 
 	// void findEnds();
-	bool findEnd(int i);
-	ofPoint findTip(int i);
-	ofPoint findWrist(int i);
+	vector< ofPoint > findEnds(int n);
+	ofPoint findTip(int n);
+	bool findWrist(int n);
+	void findHand(int n);
 
 	void setBounds(int xMin, int yMin, int xMax, int yMax );
 	void setTolerance(float tolerance);

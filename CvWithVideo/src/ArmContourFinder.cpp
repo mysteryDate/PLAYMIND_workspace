@@ -22,6 +22,7 @@ void ArmContourFinder::update() {
 	ends.resize(size);
 	wrists.resize(size);
 	tips.resize(size);
+	skippedFrames.resize(size);
 
 	endIndeces.resize(size);
 	wristIndeces.resize(size);
@@ -32,33 +33,91 @@ void ArmContourFinder::update() {
 
 	for (int i = 0; i < polylines.size(); ++i)
 	{
+		skippedFrames[i].resize(3);
 		simplifiedPolylines[i] = polylines[i];
 		simplifiedPolylines[i].simplify(tolerance);
 	}
 
 }
 
-void ArmContourFinder::updateArm(int i) {
+void ArmContourFinder::findHand(int n) {
 
-	//For detected arms
-	ofPoint * keypoints[] = {&ends[i][0], &ends[i][1], &tips[i], &wrists[i][0], &wrists[i][1]};
+	ends[n].clear();
+	ends[n].resize(2);
+	ends[n] = findEnds(n);
+	tips[n] = findTip(n);
 
-	ofPoint nearest[5];
-	float distances[5];
+}
+
+void ArmContourFinder::updateArm(int n) {
+
+	ofPoint * keypoints[] = {&ends[n][0], &ends[n][1], &tips[n]};
+
+	vector< ofPoint > newEnds = findEnds(n);
+
+	ofPoint newKeypoints [] = {newEnds[0], newEnds[1], findTip(n)};
+
+	float smoothingRate = 50;
 	int MAX_DISTANCE = 500;
-	
-	for (int j = 0; j < 5; ++j)
+	int survivingFrames = 10;
+	for (int i = 0; i < 3; ++i)
 	{
-		unsigned int vertexIndex;
-		simplifiedPolylines[i].getClosestPoint(*keypoints[j], &vertexIndex);
-		nearest[j] = simplifiedPolylines[i][vertexIndex];
-		distances[j] = ofDistSquared(nearest[j].x, nearest[j].y, keypoints[j]->x, keypoints[j]->y);
-		if(distances[j] <= MAX_DISTANCE) {
-			*keypoints[j] = nearest[j];
+		/* code */
+		if(skippedFrames[n][i] > survivingFrames) {
+			*keypoints[i] = newKeypoints[i];
+			skippedFrames[n][i] = 0;
 		}
-		else
-			handFound[i] = false;
+		else{
+			float smoothedX = ofLerp(newKeypoints[i].x, keypoints[i]->x, smoothingRate);
+			float smoothedY = ofLerp(newKeypoints[i].y, keypoints[i]->y, smoothingRate);
+			newKeypoints[i] = ofPoint(smoothedX, smoothedY);
+			float dist = ofDist(newKeypoints[i].x, newKeypoints[i].y, keypoints[i]->x, keypoints[i]->y);
+			if(dist <= MAX_DISTANCE) {
+				*keypoints[i] = newKeypoints[i];
+				skippedFrames[n][i] = 0;
+			}
+			else {
+				skippedFrames[n][i]++;
+			}
+		}
 	}
+	//For detected arms
+	// ofPoint * keypoints[] = {&ends[i][0], &ends[i][1], &tips[i], &wrists[i][0], &wrists[i][1]};
+
+	// ofPoint nearest[5];
+	// float distances[5];
+	// int MAX_DISTANCE = 500;
+	
+	// for (int j = 0; j < 5; ++j)
+	// {
+	// 	unsigned int vertexIndex;
+	// 	simplifiedPolylines[i].getClosestPoint(*keypoints[j], &vertexIndex);
+	// 	nearest[j] = simplifiedPolylines[i][vertexIndex];
+	// 	distances[j] = ofDistSquared(nearest[j].x, nearest[j].y, keypoints[j]->x, keypoints[j]->y);
+	// 	if(distances[j] <= MAX_DISTANCE) {
+	// 		*keypoints[j] = nearest[j];
+	// 	}
+	// 	else
+	// 		handFound[i] = false;
+	// }
+}
+
+vector< ofPoint > ArmContourFinder::findEnds(int n) {
+	vector< ofPoint > pts = polylines[n].getVertices();
+	vector< ofPoint > endPoints;
+
+	for (int i = 0; i < pts.size(); ++i)
+	{
+		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 2
+			|| pts[i].x >= bounds[2] - 2 || pts[i].y >=  bounds[3] - 2) {
+			endPoints.push_back(pts[i]);
+		}
+	}
+	if(endPoints.size() >= 2) {
+		endPoints[1] = endPoints.back();
+		endPoints.resize(2);
+	}
+	return endPoints;
 }
 
 void ArmContourFinder::setBounds(int  xMin, int yMin, int xMax, int yMax ) {
@@ -76,30 +135,30 @@ vector< int >& ArmContourFinder::getBounds() {
 	return bounds;
 }
 
-bool ArmContourFinder::findEnd(int i) {
+// bool ArmContourFinder::findEnd(int i) {
 
-	vector< ofPoint > pts = polylines[i].getVertices();
-	vector< ofPoint > possibleEnds;
-	vector< int > possibleEndIndeces;
-	ends[i].clear();
-	ends[i].resize(2);
+// 	vector< ofPoint > pts = polylines[i].getVertices();
+// 	vector< ofPoint > possibleEnds;
+// 	vector< int > possibleEndIndeces;
+// 	ends[i].clear();
+// 	ends[i].resize(2);
 
-	for (int i = 0; i < pts.size(); ++i)
-	{
-		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 2
-			|| pts[i].x >= bounds[2] - 2 || pts[i].y >=  bounds[3] - 2) {
-			possibleEnds.push_back(pts[i]);
-		}
-	}
-	if(possibleEnds.size() >= 2) {
-		ends[i][0] = possibleEnds[0];
-		ends[i][1] = possibleEnds.back();
-		polylines[i].getClosestPoint(ends[i][0], &endIndeces[i][0]);
-		polylines[i].getClosestPoint(ends[i][1], &endIndeces[i][1]);
-		return true;
-	}
-	else return false; 
-}
+// 	for (int i = 0; i < pts.size(); ++i)
+// 	{
+// 		if(pts[i].x == bounds[0] || pts[i].y <= bounds[1] + 2
+// 			|| pts[i].x >= bounds[2] - 2 || pts[i].y >=  bounds[3] - 2) {
+// 			possibleEnds.push_back(pts[i]);
+// 		}
+// 	}
+// 	if(possibleEnds.size() >= 2) {
+// 		ends[i][0] = possibleEnds[0];
+// 		ends[i][1] = possibleEnds.back();
+// 		polylines[i].getClosestPoint(ends[i][0], &endIndeces[i][0]);
+// 		polylines[i].getClosestPoint(ends[i][1], &endIndeces[i][1]);
+// 		return true;
+// 	}
+// 	else return false; 
+// }
 
 ofPoint ArmContourFinder::findTip(int i) {
 

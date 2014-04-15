@@ -75,19 +75,11 @@ void ofApp::update(){
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			//if(contourFinder.handFound[i])
-			//	contourFinder.updateArm(i);
-			//else {
-				if(contourFinder.findEnd(i)) {
-					if(contourFinder.findTip(i)) {
-						if(contourFinder.findWrist(i)) {
-							contourFinder.handFound[i] = true;
-						}
-						else
-							contourFinder.handFound[i] = false;
-					}
-				}
-			//}
+			if(contourFinder.handFound[i])
+				contourFinder.updateArm(i);
+			else {
+				contourFinder.findHand(i);
+			}
 			// ofPolyline shape = contourFinder.getPolyline(i);
 			// for (int j = 0; j < shape.size(); ++j)
 			// {
