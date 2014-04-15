@@ -7,7 +7,7 @@ ArmContourFinder::ArmContourFinder() {
 	bounds.push_back(605);
 	bounds.push_back(478);
 
-	tolerance = 9;
+	tolerance = 5;
 
 	simplifiedPolylines.resize(polylines.size());
 
@@ -42,6 +42,11 @@ void ArmContourFinder::update() {
 
 void ArmContourFinder::findHand(int n) {
 
+	vector < ofPoint > newEnds = findEnds(n);
+	ofPoint newTip = findTip(n);
+
+	float d1 = ofDist();
+
 	ends[n].clear();
 	ends[n].resize(2);
 	ends[n] = findEnds(n);
@@ -54,12 +59,15 @@ void ArmContourFinder::updateArm(int n) {
 	ofPoint * keypoints[] = {&ends[n][0], &ends[n][1], &tips[n]};
 
 	vector< ofPoint > newEnds = findEnds(n);
-
+	if(newEnds.size() < 2)
+		newEnds.resize(2, ofPoint(0,0));
+ 	
 	ofPoint newKeypoints [] = {newEnds[0], newEnds[1], findTip(n)};
 
-	float smoothingRate = 50;
-	int MAX_DISTANCE = 500;
+	float smoothingRate = .50;
+	int MAX_DISTANCE = 50;
 	int survivingFrames = 10;
+
 	for (int i = 0; i < 3; ++i)
 	{
 		/* code */
@@ -68,11 +76,11 @@ void ArmContourFinder::updateArm(int n) {
 			skippedFrames[n][i] = 0;
 		}
 		else{
-			float smoothedX = ofLerp(newKeypoints[i].x, keypoints[i]->x, smoothingRate);
-			float smoothedY = ofLerp(newKeypoints[i].y, keypoints[i]->y, smoothingRate);
-			newKeypoints[i] = ofPoint(smoothedX, smoothedY);
 			float dist = ofDist(newKeypoints[i].x, newKeypoints[i].y, keypoints[i]->x, keypoints[i]->y);
 			if(dist <= MAX_DISTANCE) {
+				float smoothedX = ofLerp(newKeypoints[i].x, keypoints[i]->x, smoothingRate);
+				float smoothedY = ofLerp(newKeypoints[i].y, keypoints[i]->y, smoothingRate);
+				newKeypoints[i] = ofPoint(smoothedX, smoothedY);
 				*keypoints[i] = newKeypoints[i];
 				skippedFrames[n][i] = 0;
 			}

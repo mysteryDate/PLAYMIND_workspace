@@ -79,6 +79,7 @@ void ofApp::update(){
 				contourFinder.updateArm(i);
 			else {
 				contourFinder.findHand(i);
+				contourFinder.handFound[i] = true;
 			}
 			// ofPolyline shape = contourFinder.getPolyline(i);
 			// for (int j = 0; j < shape.size(); ++j)
@@ -112,44 +113,42 @@ void ofApp::draw(){
 	ofSetColor(0, 255, 0);
 
     for (int i = 0; i < contourFinder.size(); i++) {
-    	if(contourFinder.handFound[i]) {
 
     		
-    		ofPolyline rt;
-	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
-		    ofSetColor(255, 255, 255);
-	        ofCircle(contourFinder.tips[i], 3);
-	        ofNoFill();
-	        //ofCircle(contourFinder.tips[i], hand_radius);
-	        //ofCircle(contourFinder.tips[i], hand_radius - 40);
-	        ofFill();
-	        ofSetColor(255,0,0); 
-	        // ofCircle(contourFinder.wrists[i][0], 3);
-	        // ofCircle(contourFinder.wrists[i][1], 3);
-		    //ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
-	 	    // ofSetColor(0, 255, 255);
-	 	    // ofPoint pt = toOf(contourFinder.getCentroid(i));
-	 	    // ofCircle(pt, 3);
-	 	    // ofSetColor(255, 255, 0);
-	 	    // pt = toOf(contourFinder.getCenter(i));
-	 	    // ofCircle(pt, 3);
-	 	    // ofPoint cen = ofPoint((contourFinder.ends[i][0].x + contourFinder.ends[i][1].x)/2, (contourFinder.ends[i][0].y + contourFinder.ends[i][1].y)/2);
-			// float m = (pt.y - cen.y) / (pt.x - cen.x);
-			// float xn = (5000 - cen.y) / m + cen.x;
-			// ofLine(cen.x, cen.y, xn, 5000);
-	 	    // rt = toOf(contourFinder.getMinAreaRect(i));
-	 	    // rt.draw();
-	 	    // rt = toOf(contourFinder.getFitQuad(i));
-	 	    // ofSetColor(255, 0, 255);
-	 	    // rt.draw();
-	 	    // rt = toOf(contourFinder.getFitEllipse(i));
-	 	    // ofSetColor(0,0,255);
-	 	    // rt.draw();  
-	 	    // ofSetColor(255,50,255);
-	 	    // rt = toOf(contourFinder.getConvexHull(i));
-	 	    // rt.draw();
-		    //contourFinder.hands[i].draw();
-    	}
+        ofPolyline rt;
+        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
+        ofSetColor(255, 255, 255);
+        ofCircle(contourFinder.tips[i], 3);
+        ofNoFill();
+        //ofCircle(contourFinder.tips[i], hand_radius);
+        //ofCircle(contourFinder.tips[i], hand_radius - 40);
+        ofFill();
+        ofSetColor(255,0,0); 
+        // ofCircle(contourFinder.wrists[i][0], 3);
+        // ofCircle(contourFinder.wrists[i][1], 3);
+        //ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
+        // ofSetColor(0, 255, 255);
+        // ofPoint pt = toOf(contourFinder.getCentroid(i));
+        // ofCircle(pt, 3);
+        // ofSetColor(255, 255, 0);
+        // pt = toOf(contourFinder.getCenter(i));
+        // ofCircle(pt, 3);
+        // ofPoint cen = ofPoint((contourFinder.ends[i][0].x + contourFinder.ends[i][1].x)/2, (contourFinder.ends[i][0].y + contourFinder.ends[i][1].y)/2);
+        // float m = (pt.y - cen.y) / (pt.x - cen.x);
+        // float xn = (5000 - cen.y) / m + cen.x;
+        // ofLine(cen.x, cen.y, xn, 5000);
+        // rt = toOf(contourFinder.getMinAreaRect(i));
+        // rt.draw();
+        // rt = toOf(contourFinder.getFitQuad(i));
+        // ofSetColor(255, 0, 255);
+        // rt.draw();
+        // rt = toOf(contourFinder.getFitEllipse(i));
+        // ofSetColor(0,0,255);
+        // rt.draw();  
+        // ofSetColor(255,50,255);
+        // rt = toOf(contourFinder.getConvexHull(i));
+        // rt.draw();
+        //contourFinder.hands[i].draw();
 	    ofSetColor(0, 255, 0);
 
 	    //features = flow.getFeatures();
