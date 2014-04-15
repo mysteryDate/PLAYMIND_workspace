@@ -75,11 +75,12 @@ void ofApp::update(){
 
 		for (int i = 0; i < contourFinder.size(); ++i)
 		{
-			if(contourFinder.handFound[i])
-				contourFinder.updateArm(i);
-			else {
-				contourFinder.findHand(i);
-			}
+			// if(contourFinder.handFound[i])
+			// 	contourFinder.updateArm(i);
+			// else {
+			// 	contourFinder.findHand(i);
+			// }
+			contourFinder.findHand(i);
 			// ofPolyline shape = contourFinder.getPolyline(i);
 			// for (int j = 0; j < shape.size(); ++j)
 			// {
@@ -113,7 +114,7 @@ void ofApp::draw(){
 
     for (int i = 0; i < contourFinder.size(); i++) {
 
-    	if( contourFinder.handFound[i]) {
+    	if( true) {
 	        ofPolyline rt;
 	        vector< ofPoint > line = contourFinder.getPolyline(i).getVertices();
 	        ofSetColor(255, 255, 255);
@@ -123,8 +124,10 @@ void ofApp::draw(){
 	        //ofCircle(contourFinder.tips[i], hand_radius - 40);
 	        ofFill();
 	        ofSetColor(255,0,0); 
-	        ofCircle(contourFinder.wrists[i][0], 3);
-	        ofCircle(contourFinder.wrists[i][1], 3);
+	        if(contourFinder.wrists[i].size() == 2) {
+		        ofCircle(contourFinder.wrists[i][0], 3);
+		        ofCircle(contourFinder.wrists[i][1], 3);
+		    }
 	        //ofCircle(contourFinder.getPolyline(i).getClosestPoint(ofPoint(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2)), 3);
 	        // ofSetColor(0, 255, 255);
 	        // ofPoint pt = toOf(contourFinder.getCentroid(i));
@@ -168,7 +171,7 @@ void ofApp::draw(){
 	int simpPoints = 0;
     if(contourFinder.size() != 0) {
 		defects = contourFinder.getConvexityDefects(0);
-		simpPoints = contourFinder.simplifiedPolylines[0].size();
+		simpPoints = contourFinder. simplifiedPolylines[0].size();
 		ofPoint centroid = toOf(contourFinder.getCentroid(0));
 		ofPoint center = toOf(contourFinder.getCenter(0));\
 		reportStream << "Distance of centers: " << ofDist(centroid.x, centroid.y, center.x, center.y) << endl;

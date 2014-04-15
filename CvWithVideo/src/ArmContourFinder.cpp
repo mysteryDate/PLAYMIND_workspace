@@ -13,9 +13,9 @@ ArmContourFinder::ArmContourFinder() {
 
 	MIN_HAND_SIZE = 80;
 	MAX_HAND_SIZE = 120;
-	SURVIVAL_FRAMES = 2;
-	MAX_MOVEMENT_DISTANCE = 50;
-	SMOOTHING_RATE = 0.5;
+	SURVIVAL_FRAMES = 0;
+	MAX_MOVEMENT_DISTANCE = 500;
+	SMOOTHING_RATE = 1;
 
 }
 
@@ -53,22 +53,26 @@ void ArmContourFinder::findHand(int n) {
 	ends[n] = findEnds(n);
 	ofPoint newTip = findTip(n);
 
-	float d1 = ofDist(ends[n][0].x, ends[n][0].y, newTip.x, newTip.y);
-	float d2 = ofDist(ends[n][1].x, ends[n][1].y, newTip.x, newTip.y);
+	tips[n] = newTip;
 
-	if(d1 > MIN_HAND_SIZE or d2 > MIN_HAND_SIZE) {
-		tips[n] = newTip;
-		vector < ofPoint > newWrist = findWrist(n, newTip);
-		if(newWrist.size() == 2) {
-			wrists[n] = newWrist;
-			handFound[n] = true;
-		}
-		else
-			handFound[n] = false;
-	}
-	else {
-		handFound[n] = false;
-	}
+	wrists[n] = findWrist(n, newTip);
+
+	// float d1 = ofDist(ends[n][0].x, ends[n][0].y, newTip.x, newTip.y);
+	// float d2 = ofDist(ends[n][1].x, ends[n][1].y, newTip.x, newTip.y);
+// 
+	// if(d1 > MIN_HAND_SIZE or d2 > MIN_HAND_SIZE) {
+	// 	tips[n] = newTip;
+	// 	vector < ofPoint > newWrist = findWrist(n, newTip);
+	// 	if(newWrist.size() == 2) {
+	// 		wrists[n] = newWrist;
+	// 		handFound[n] = true;
+	// 	}
+	// 	else
+	// 		handFound[n] = false;
+	// }
+	// else {
+	// 	handFound[n] = false;
+	// }
 
 }
 
