@@ -103,26 +103,42 @@ bool ArmContourFinder::findEnd(int i) {
 
 bool ArmContourFinder::findTip(int i) {
 
-	//Which direction has more points on it?
-	int a = endIndeces[i][1] - endIndeces[i][0];
-	int b = polylines[i].size() - a;
-	vector< ofPoint > pts = polylines[i].getVertices();
+	// //Which direction has more points on it?
+	// int a = endIndeces[i][1] - endIndeces[i][0];
+	// int b = polylines[i].size() - a;
+	// vector< ofPoint > pts = polylines[i].getVertices();
 
-	if(a > b) {
-		tipIndeces[i] = (a - b) / 2;
-	}
-	else {
-		if( (b/2) + endIndeces[i][1] > pts.size()) {
-			tipIndeces[i] = ( (b/2) + endIndeces[i][1] ) - pts.size();
-		}
-		else {
-			tipIndeces[i] = (b/2) + endIndeces[i][1];
-		}
-	}
-	unsigned int fullIndex;
-	//tips[i] = simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]] );
-	simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]], &fullIndex );
-	tips[i] = simplifiedPolylines[i].getVertices()[fullIndex];
+	// if(a > b) {
+	// 	tipIndeces[i] = (a - b) / 2;
+	// }
+	// else {
+	// 	if( (b/2) + endIndeces[i][1] > pts.size()) {
+	// 		tipIndeces[i] = ( (b/2) + endIndeces[i][1] ) - pts.size();
+	// 	}
+	// 	else {
+	// 		tipIndeces[i] = (b/2) + endIndeces[i][1];
+	// 	}
+	// }
+	// unsigned int fullIndex;
+	// //tips[i] = simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]] );
+	// simplifiedPolylines[i].getClosestPoint( pts[tipIndeces[i]], &fullIndex );
+	// tips[i] = simplifiedPolylines[i].getVertices()[fullIndex];
+
+	//Create a line connecting the center of the base of the arm to the center of the bounding box
+	ofPoint boxCenter = ofxCv::toOf(getCenter(i));
+	ofPoint baseCenter = ofPoint((ends[i][0].x + ends[i][1].x)/2, (ends[i][0].y + ends[i][1].y)/2 );
+	// Slope of the line
+	float m = (boxCenter.y - baseCenter.y) / (boxCenter.x - baseCenter.x);
+	float yn = 5000;	// New y coordinate (far off)
+	if(boxCenter.y < baseCenter.y) 
+		yn *= -1;
+	float xn = (yn - baseCenter.y) / m + baseCenter.x;
+	ofPoint mostDistant = ofPoint(xn, yn);
+
+	unsigned int simplifiedIndex, fullIndex;
+	tips[i] = simplifiedPolylines[i].getClosestPoint(mostDistant, &simplifiedIndex);
+	polylines[i].getClosestPoint(tips[i], &fullIndex);
+
 	return true;
 
 
