@@ -120,9 +120,11 @@ void ofApp::draw(){
 	        ofSetColor(255, 255, 255);
 	        ofCircle(contourFinder.tips[i], 3);
 	        ofNoFill();
+	        ofCircle(contourFinder.tips[i], contourFinder.MAX_HAND_SIZE);
+	        ofCircle(contourFinder.tips[i], contourFinder.MIN_HAND_SIZE);
 	        //ofCircle(contourFinder.tips[i], hand_radius);
 	        //ofCircle(contourFinder.tips[i], hand_radius - 40);
-	        ofFill();
+		    ofFill();
 	        ofSetColor(255,0,0); 
 	        if(contourFinder.wrists[i].size() == 2) {
 		        ofCircle(contourFinder.wrists[i][0], 3);
@@ -205,7 +207,7 @@ void ofApp::draw(){
 	ofDrawBitmapString(reportStream.str(), DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 80);
 	ofPopStyle();
     
-    drawLabels();
+    //drawLabels();
 	drawEnds();
 
 	//grayImg.drawROI(0,0);

@@ -40,6 +40,8 @@ public:
 
 	vector< int >& getBounds();
 	int* getTolerance();
+	int MIN_HAND_SIZE;
+	int MAX_HAND_SIZE;
 
 
 private:
@@ -49,8 +51,6 @@ private:
 	float tolerance;
 	float SMOOTHING_RATE;
 
-	int MIN_HAND_SIZE;
-	int MAX_HAND_SIZE;
 	int MAX_MOVEMENT_DISTANCE;
 	int SURVIVAL_FRAMES;
 
