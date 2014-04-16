@@ -120,8 +120,8 @@ void ofApp::draw(){
 	        ofSetColor(255, 255, 255);
 	        ofCircle(contourFinder.tips[i], 3);
 	        ofNoFill();
-	        ofCircle(contourFinder.tips[i], contourFinder.MAX_HAND_SIZE);
-	        ofCircle(contourFinder.tips[i], contourFinder.MIN_HAND_SIZE);
+	        // ofCircle(contourFinder.tips[i], contourFinder.MAX_HAND_SIZE);
+	        // ofCircle(contourFinder.tips[i], contourFinder.MIN_HAND_SIZE);
 	        //ofCircle(contourFinder.tips[i], hand_radius);
 	        //ofCircle(contourFinder.tips[i], hand_radius - 40);
 		    ofFill();
@@ -153,6 +153,7 @@ void ofApp::draw(){
 	        // rt = toOf(contourFinder.getConvexHull(i));
 	        // rt.draw();
 	        //contourFinder.hands[i].draw();
+	        contourFinder.simplifiedPolylines[i].draw();
 		    ofSetColor(0, 255, 0);
 		}
 
@@ -161,7 +162,7 @@ void ofApp::draw(){
 	    {
 	    	ofCircle(features[j], 3);
 	    }
-	    contourFinder.simplifiedPolylines[i].draw();
+	    //contourFinder.draw();
     	//ofPolyline hull = toOf(contourFinder.getConvexHull(i));
     	//hull.draw();
     }
@@ -192,8 +193,9 @@ void ofApp::draw(){
 	// << "xMin: " << xMin << endl
 	// << "yMin: " << yMin << endl
 	// << "#Defects: " << defects.size() << endl
-	<< "Simplified points " << simpPoints << endl
-	<< "Hand radius: " << hand_radius << endl
+	//<< "Simplified points " << simpPoints << endl
+	//<< "Hand radius: " << hand_radius << endl
+	<< "SMOOTHING_RATE: " << contourFinder.SMOOTHING_RATE << endl
 	<< "Frame: " << movie.getCurrentFrame() << endl;
 	if(simpPoints > 9) {
 		reportStream << "Hand is spread!" << endl;
@@ -316,6 +318,15 @@ void ofApp::keyPressed(int key){
         case 'h':
         	hand_radius--;
         	break;
+
+        case 'S':
+        	contourFinder.SMOOTHING_RATE++;
+        	break;
+
+        case 's':
+        	contourFinder.SMOOTHING_RATE--;
+        	break;
+
 
 	}
 

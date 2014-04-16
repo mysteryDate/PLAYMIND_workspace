@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp{
 		ArmContourFinder	contourFinder;
 
 		ofxCv::ContourFinder 	hands;
-		ofxCv::RectTracker			tracker;
+		ofxCv::RectTracker		tracker;
 		ofxCv::FlowPyrLK		flow;
 
 		//Maximum points of blobs (for testing)

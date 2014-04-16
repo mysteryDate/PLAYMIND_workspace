@@ -40,8 +40,8 @@ void ArmContourFinder::update() {
 	for (int i = 0; i < polylines.size(); ++i)
 	{
 		skippedFrames[i].resize(5, 0);
-		simplifiedPolylines[i] = polylines[i];
-		simplifiedPolylines[i].simplify(tolerance);
+		simplifiedPolylines[i] = polylines[i].getSmoothed(SMOOTHING_RATE);
+		// simplifiedPolylines[i].simplify(tolerance);
 	}
 
 }
@@ -222,7 +222,7 @@ ofPoint ArmContourFinder::findTip(int n) {
 	float xn = (yn - baseCenter.y) / m + baseCenter.x;
 	ofPoint mostDistant = ofPoint(xn, yn);
 
-	return polylines[n].getClosestPoint(mostDistant);
+	return simplifiedPolylines[n].getClosestPoint(mostDistant);
 
 }
 
@@ -236,9 +236,9 @@ vector < ofPoint > ArmContourFinder::findWrist(int n, ofPoint newTip) {
 	unsigned int end1;
 	unsigned int end2;
 
-	polylines[n].getClosestPoint(tips[n], &start);
-	polylines[n].getClosestPoint(ends[n][0], &end1);
-	polylines[n].getClosestPoint(ends[n][1], &end2);
+	simplifiedPolylines[n].getClosestPoint(tips[n], &start);
+	simplifiedPolylines[n].getClosestPoint(ends[n][0], &end1);
+	simplifiedPolylines[n].getClosestPoint(ends[n][1], &end2);
 
 	int minSquared = MIN_HAND_SIZE * MIN_HAND_SIZE;
 	int maxSquared = MAX_HAND_SIZE * MAX_HAND_SIZE;
@@ -247,21 +247,21 @@ vector < ofPoint > ArmContourFinder::findWrist(int n, ofPoint newTip) {
 	int i = start;
 	float distSquared;
 	while(i != end1 and i != end2) {
-		distSquared = ofDistSquared(tips[n].x, tips[n].y, polylines[n][i].x, polylines[n][i].y );
+		distSquared = ofDistSquared(tips[n].x, tips[n].y, simplifiedPolylines[n][i].x, simplifiedPolylines[n][i].y );
 		if(distSquared < maxSquared and distSquared > minSquared)
-			sideOne.addVertex( polylines[n][i] );
+			sideOne.addVertex( simplifiedPolylines[n][i] );
 		i++;
-		if(i == polylines[n].size())
+		if(i == simplifiedPolylines[n].size())
 			i = 0;
 	}
     i = start;
 	while(i != end1 and i != end2) {
-		distSquared = ofDistSquared(tips[n].x, tips[n].y, polylines[n][i].x, polylines[n][i].y );
+		distSquared = ofDistSquared(tips[n].x, tips[n].y, simplifiedPolylines[n][i].x, simplifiedPolylines[n][i].y );
 		if(distSquared < maxSquared and distSquared > minSquared)
-			sideTwo.addVertex( polylines[n][i] );
+			sideTwo.addVertex( simplifiedPolylines[n][i] );
 		i--;
 		if(i < 0)
-			i = polylines[n].size() - 1;
+			i = simplifiedPolylines[n].size() - 1;
 	}
 
 	// Now find the two points with the shortest distance (how's about some n^2!)
