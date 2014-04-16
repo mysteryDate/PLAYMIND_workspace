@@ -7,7 +7,7 @@ ArmContourFinder::ArmContourFinder() {
 	bounds.push_back(605);
 	bounds.push_back(478);
 
-	tolerance = 8;
+	tolerance = 5;
 
 	simplifiedPolylines.resize(polylines.size());
 
@@ -50,12 +50,14 @@ void ArmContourFinder::findHand(int n) {
 
 	ends[n].clear();
 	ends[n].resize(2);
-	ends[n] = findEnds(n);
-	ofPoint newTip = findTip(n);
+	if(polylines[n].size() > 10) {
+		ends[n] = findEnds(n);
+		ofPoint newTip = findTip(n);
 
-	tips[n] = newTip;
+		tips[n] = newTip;
 
-	wrists[n] = findWrist(n, newTip);
+		wrists[n] = findWrist(n, newTip);
+	}
 
 	// float d1 = ofDist(ends[n][0].x, ends[n][0].y, newTip.x, newTip.y);
 	// float d2 = ofDist(ends[n][1].x, ends[n][1].y, newTip.x, newTip.y);
@@ -217,40 +219,92 @@ ofPoint ArmContourFinder::findTip(int n) {
 
 vector < ofPoint > ArmContourFinder::findWrist(int n, ofPoint newTip) {
 
-	float avgHandSize = (MAX_HAND_SIZE + MIN_HAND_SIZE) / 2;
+	//Split points
+	ofPolyline sideOne;
+	ofPolyline sideTwo;
 
+	unsigned int start;
+	unsigned int end1;
+	unsigned int end2;
+
+	polylines[n].getClosestPoint(tips[n], &start);
+	polylines[n].getClosestPoint(ends[n][0], &end1);
+	polylines[n].getClosestPoint(ends[n][1], &end2);
+
+	// Put all to the left in one
+	int i = start;
+	float dist;
+	while(i != end1 and i != end2) {
+		i++;
+		if(i > polylines[n].size())
+			i = 0;
+		dist = ofDist(tips[n].x, tips[n].y, polylines[n][i].x, polylines[n][i].y );
+		if(dist < MAX_HAND_SIZE and dist > MIN_HAND_SIZE)
+			sideOne.addVertex( polylines[n][i] );
+	}
+    i = start;
+	while(i != end1 and i != end2) {
+		i--;
+		if(i < 0)
+			i += polylines[n].size();
+		dist = ofDist(tips[n].x, tips[n].y, polylines[n][i].x, polylines[n][i].y );
+		if(dist < MAX_HAND_SIZE and dist > MIN_HAND_SIZE)
+			sideTwo.addVertex( polylines[n][i] );
+	}
+
+	// Now find the two points with the shortest distance (how's about some n^2!)
+	float shortestDist = 999999;
 	vector< ofPoint > possibleWrists;
 	possibleWrists.resize(2);
-	vector< ofPoint > pts = simplifiedPolylines[n].getVertices();
-
-	float lowestDists[] = {50000, 50000}; 
-
-	unsigned int tipIndex;
-	simplifiedPolylines[n].getClosestPoint(newTip, &tipIndex);
-
-	unsigned int endIndex;
-	simplifiedPolylines[n].getClosestPoint(ends[n][0], &endIndex);
-
-
-
-	for (int i = 0; i < pts.size(); ++i)
+	for (int i = 0; i < sideOne.size(); ++i)
 	{
-		float dist = ofDist(pts[i].x, pts[i].y, newTip.x, newTip.y);
-		if(dist < MAX_HAND_SIZE and dist > MIN_HAND_SIZE) {
-			if(i < tipIndex and dist - avgHandSize < lowestDists[0]) {
-				possibleWrists[0] = pts[i];
-				lowestDists[0] = dist;
-			}
-			else if(dist - avgHandSize < lowestDists[1]) {
-				possibleWrists[1] = pts[i];
-				lowestDists[1] = dist;
+		for (int j = 0; j < sideTwo.size(); ++j)
+		{
+			dist = ofDistSquared(sideOne[i].x, sideOne[i].y, sideTwo[j].x, sideTwo[j].y);
+			if(dist < shortestDist) {
+				possibleWrists[0] = sideOne[i];
+				possibleWrists[1] = sideTwo[j];
+				shortestDist = dist;
 			}
 		}
 	}
 
-	if( lowestDists[0] == 50000 or lowestDists[1] == 50000)
-		possibleWrists.clear();
 	return possibleWrists;
+
+	// float avgHandSize = (MAX_HAND_SIZE + MIN_HAND_SIZE) / 2;
+
+	// vector< ofPoint > possibleWrists;
+	// possibleWrists.resize(2);
+	// vector< ofPoint > pts = simplifiedPolylines[n].getVertices();
+
+	// float lowestDists[] = {50000, 50000}; 
+
+	// unsigned int tipIndex;
+	// simplifiedPolylines[n].getClosestPoint(newTip, &tipIndex);
+
+	// unsigned int endIndex;
+	// simplifiedPolylines[n].getClosestPoint(ends[n][0], &endIndex);
+
+
+
+	// for (int i = 0; i < pts.size(); ++i)
+	// {
+	// 	float dist = ofDist(pts[i].x, pts[i].y, newTip.x, newTip.y);
+	// 	if(dist < MAX_HAND_SIZE and dist > MIN_HAND_SIZE) {
+	// 		if(i < tipIndex and dist - avgHandSize < lowestDists[0]) {
+	// 			possibleWrists[0] = pts[i];
+	// 			lowestDists[0] = dist;
+	// 		}
+	// 		else if(dist - avgHandSize < lowestDists[1]) {
+	// 			possibleWrists[1] = pts[i];
+	// 			lowestDists[1] = dist;
+	// 		}
+	// 	}
+	// }
+
+	// if( lowestDists[0] == 50000 or lowestDists[1] == 50000)
+	// 	possibleWrists.clear();
+	// return possibleWrists;
 
 }
 
