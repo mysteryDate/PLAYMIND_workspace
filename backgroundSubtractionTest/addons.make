@@ -1,0 +1,6 @@
+ofxKinect
+ofxOpenCv
+ofxCv
+ofxFX
+ofxGifDecoder
+ofxTrueTypeFontUC

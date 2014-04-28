@@ -69,9 +69,10 @@ void ofApp::update() {
 	// Ripples code
 
 	ripples.begin();
-	ofFill();
-    ofSetColor(ofNoise( ofGetFrameNum() ) * 255 * 5, 255);
-    ofEllipse(mouseX,mouseY, 10,10);
+		ofFill();
+	    ofSetColor(ofNoise( ofGetFrameNum() ) * 255 * 5, 255);
+	    ofEllipse(mouseX,mouseY, 10,10);
+	    contourFinder.draw();
     ripples.end();
     ripples.update();
     
