@@ -60,6 +60,7 @@ class ofApp : public ofBaseApp{
 		ofxCvGrayscaleImage green;
 		ofxCvGrayscaleImage blue;
 
+		ofxCv::ContourFinder contourFinder;
 
 		int threshold;
 		bool bSaveSequence;

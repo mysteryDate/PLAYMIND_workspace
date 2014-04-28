@@ -28,6 +28,8 @@ void ofApp::setup(){
 
 	int threshold = 100;
 
+	contourFinder.setMinArea(1200);
+
 }
 
 //--------------------------------------------------------------
@@ -54,7 +56,6 @@ void ofApp::update(){
 			}
 			i++;
 		}
-		cout << i << endl;
 
 		image.loadImage(name);
 		background.setFromPixels(image.getPixels(), 640, 480);
@@ -89,7 +90,10 @@ void ofApp::update(){
 				pix[i] = 0;
 		}
 
-		diff.convertToRange(0, 255);
+		grayImage.flagImageChanged();
+
+		contourFinder.findContours(grayImage);
+
 	}
 
 	// if(kinect.isFrameNew()) {
@@ -113,8 +117,9 @@ void ofApp::draw(){
 	ofRotateZ(VIDEO_R);
 		video.draw(VIDEO_X, VIDEO_Y, VIDEO_W, VIDEO_H);
 	ofRotateZ(-VIDEO_R);
-	grayImage.draw(0,0);
+	// grayImage.draw(0,0);
 	// diff.draw(0,0);
+	contourFinder.draw();
 
 	ofPushStyle();
 		ofSetColor(0,255,0);
