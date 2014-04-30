@@ -1,5 +1,17 @@
 #pragma once
 
+// Calibration variables
+// -----------------------------------
+// Cropping out kinect data
+#define KINECT_CROP_LEFT 	28
+#define KINECT_CROP_RIGHT 	10
+#define KINECT_CROP_TOP 	14
+#define KINECT_CROP_BOTTOM 	27
+
+// For the contour finder
+#define MIN_CONTOUR_AREA 1000
+// -----------------------------------
+
 #include "ofMain.h"
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
@@ -12,11 +24,10 @@ class ofApp : public ofBaseApp{
 
 
 		void update();
-		void learnBackground();
+		void transformInput();
 
 		void draw();
-
-
+		void drawFeedback();
 
 		struct Beaver
 		{
@@ -34,13 +45,10 @@ class ofApp : public ofBaseApp{
 		ofxCvGrayscaleImage kinectDiff;
 		int 				nearThreshold;
 		int 				farThreshold;
-		int 				threshold;
-
-		int nFramesToAverage;
-		int nFramesAveraged;
 		bool 				bLearnBackground;
 		
 		ofxCv::ContourFinder contourFinder;
+		ofxCv::ContourFinder contourFinder2;
 
 		void keyPressed(int key);
 };
