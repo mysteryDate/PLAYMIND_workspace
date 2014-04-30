@@ -7,6 +7,7 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 
 	//kinect instructions
+	kinect.setRegistration(true);
 	kinect.init();
 	kinect.open();
 	kinectImg.allocate(kinect.width, kinect.height);
@@ -46,7 +47,7 @@ void ofApp::update(){
 		{
 			int bp = bPix[i];
 			int p = pix[i];
-			int diff = abs(pix[i] - bPix[i]);
+			int diff = pix[i] - bPix[i];
 			if(diff > farThreshold and diff < nearThreshold)
 				continue;
 			else
@@ -96,9 +97,10 @@ void ofApp::drawFeedback(){
 	reportStream
 	<< "nearThreshold: " << nearThreshold << endl
 	<< "farThreshold: " << farThreshold << endl
-	<< ofToString(ofGetFrameRate()) << endl;
+	<< ofToString(ofGetFrameRate()) << endl
+	<< ofToString(ofGetFrameNum()) << endl;
 
-	ofDrawBitmapString(reportStream.str(), 1720, 880);
+	ofDrawBitmapString(reportStream.str(), 1420, 880);
 	ofPopStyle();
 
 
