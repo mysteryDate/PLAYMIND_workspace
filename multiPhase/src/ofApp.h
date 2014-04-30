@@ -39,7 +39,7 @@
 #include "ofxRipples.h"
 #include "ofxBounce.h" 
 #include "ofxTrueTypeFontUC.h"
-#include "ofxGifDecoder.h"
+#include "ofxXmlSettings.h"
 #include <cmath>
 
 class ofApp : public ofBaseApp{
@@ -61,6 +61,32 @@ class ofApp : public ofBaseApp{
 		void exit();
 
 		void keyPressed(int key);
+
+		// For storing information on the particular phase of the video
+		struct Phase
+		{
+			int number;
+			bool active;
+			struct Video
+			{
+				int startFrame;
+				int endFrame;
+				bool playing;
+			};
+			struct Display
+			{
+				vector< ofPolyline > regions;
+				vector< string > 	 displayText;
+			};
+			struct Interactivity
+			{
+				int nearThreshold;
+				int farThreshold;
+				bool detectHands;
+			};
+		};
+		vector< Phase > 	phase;
+		int activePhase;
 		
 		// Input Processing
 		ofxKinect 			kinect;
@@ -118,11 +144,11 @@ class ofApp : public ofBaseApp{
 		int noiseDist;
 		// Feedback
 		bool bFeedback;
-    
-		ofxGifDecoder 	gifDecoder;
-		ofxGifFile		tiger;
 
 		int PLAY_MODE;
+
+		// For storing info
+		ofxXmlSettings XML;
 
 };
 

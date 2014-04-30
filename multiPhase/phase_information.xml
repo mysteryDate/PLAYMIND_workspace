@@ -1,0 +1,62 @@
+<!-- 
+phase 1: Ice forms
+phase 2: Ice melts
+phase 3: Rivers
+phase 4: Natives
+phase 5: Beavers
+phase 6: Trees
+-->
+<PHASE number='1' name="Ice forms">
+	<VIDEO>
+		<STARTFRAME></STARTFRAME>
+		<ENDFRAME></ENDFRAME>
+		<PLAYING></PLAYING>
+	</VIDEO>
+	<DISPLAY>
+		<REGIONS>
+			<REGION displayText="Rivière des Outaouais">
+			</REGION>
+		</REGIONS>
+	</DISPLAY>
+	<INTERACTIVITY>
+		<NEARTHRESHOLD></NEARTHRESHOLD>
+		<FARTHRESHOLD></FARTHRESHOLD>
+		<DETECTHANDS></DETECTHANDS>
+	</INTERACTIVITY>
+</PHASE>
+<PHASE number='2' name="Ice melts">
+	<VIDEO>
+		<STARTFRAME></STARTFRAME>
+		<ENDFRAME></ENDFRAME>
+		<PLAYING></PLAYING>
+	</VIDEO>
+	<DISPLAY>
+		<REGIONS>
+			<REGION displayText="Rivière des Outaouais">
+			</REGION>
+		</REGIONS>
+	</DISPLAY>
+	<INTERACTIVITY>
+		<NEARTHRESHOLD></NEARTHRESHOLD>
+		<FARTHRESHOLD></FARTHRESHOLD>
+		<DETECTHANDS></DETECTHANDS>
+	</INTERACTIVITY>
+</PHASE>
+<PHASE number='3' name="Rivers">
+	<VIDEO>
+		<STARTFRAME></STARTFRAME>
+		<ENDFRAME></ENDFRAME>
+		<PLAYING></PLAYING>
+	</VIDEO>
+	<DISPLAY>
+		<REGIONS>
+			<REGION displayText="Rivière des Outaouais">
+			</REGION>
+		</REGIONS>
+	</DISPLAY>
+	<INTERACTIVITY>
+		<NEARTHRESHOLD></NEARTHRESHOLD>
+		<FARTHRESHOLD></FARTHRESHOLD>
+		<DETECTHANDS></DETECTHANDS>
+	</INTERACTIVITY>
+</PHASE>

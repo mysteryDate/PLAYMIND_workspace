@@ -1,3 +1,4 @@
+#pragma once
 #include "ContourFinder.h"
 #include "ofMain.h"
 

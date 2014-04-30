@@ -5,7 +5,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofSetDataPathRoot("../Resources/data/");
+	// For release only
+    // ofSetDataPathRoot("../Resources/data/");
     
 	ofBackground(0,0,0);
 	ofSetFrameRate(60);
