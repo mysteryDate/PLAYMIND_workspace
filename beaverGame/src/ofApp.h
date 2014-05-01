@@ -8,6 +8,12 @@
 #define KINECT_CROP_TOP 	14
 #define KINECT_CROP_BOTTOM 	27
 
+// Transforming kinect data to fit "real" world
+#define INPUT_DATA_ZOOM 2.57
+#define INPUT_DATA_DX	-25
+#define	INPUT_DATA_DY	-100
+#define INPUT_DATA_R 	0
+
 // For the contour finder
 #define MIN_CONTOUR_AREA 1000
 // -----------------------------------
@@ -27,12 +33,14 @@ class ofApp : public ofBaseApp{
 		void transformInput();
 
 		void draw();
+		void drawHandOverlay();
 		void drawFeedback();
 
 		struct Beaver
 		{
 			ofVec2f v;
 			ofPoint pos;
+			ofImage currentFrame;
 		};
 
 		// Input Processing
@@ -46,7 +54,16 @@ class ofApp : public ofBaseApp{
 		int 				farThreshold;
 		bool 				bLearnBackground;
 		
+		// Cv
 		ofxCv::ContourFinder contourFinder;
+
+		// Background
+		ofImage background;
+
+		// Feedback
+		bool bDrawFeedback;
+		// Calibration
+		float x, y, w, h, r;
 
 		void keyPressed(int key);
 };

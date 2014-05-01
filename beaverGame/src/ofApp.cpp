@@ -3,8 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	ofBackground(0,0,0);
 	ofSetFrameRate(60);
+	background.loadImage("background.jpg");
 
 	//kinect instructions
 	kinect.init();
@@ -17,6 +17,12 @@ void ofApp::setup(){
 
 	nearThreshold = 15;
 	farThreshold = 1;
+
+	bDrawFeedback = false;
+
+	// x = INPUT_DATA_DX;
+	// y = INPUT_DATA_DY;
+	// w = INPUT_DATA_ZOOM;
 
 }
 
@@ -63,28 +69,65 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-	kinectImg.draw(0,0);
-	contourFinder.draw();
+    background.draw(0,0);
 
-    drawFeedback();
+    drawHandOverlay();
+
+    if(bDrawFeedback)
+	    drawFeedback();
+}
+
+void ofApp::drawHandOverlay() {
+
+	ofPushStyle();
+	ofPushMatrix();
+		ofSetColor(0,0,0);
+		ofFill();
+		ofTranslate(INPUT_DATA_DX, INPUT_DATA_DY);
+		ofScale(INPUT_DATA_ZOOM, INPUT_DATA_ZOOM);
+
+	for (int i = 0; i < contourFinder.size(); ++i)
+	{
+		ofPolyline blob = contourFinder.getPolyline(i);
+		blob = blob.getSmoothed(4);
+		ofPoint center = blob.getCentroid2D();
+
+		ofBeginShape();
+			for (int j = 0; j < blob.size(); ++j) {
+				ofVertex(blob[j]);
+			}
+		ofEndShape();
+
+		ofSetColor(255,255,255);
+		ofCircle(center, 3);
+
+	}
+
+	ofPopStyle();
+	ofPopMatrix();
+
 }
 
 void ofApp::drawFeedback(){
 
 	ofPushStyle();
+	kinectImg.draw(0,0);
+	contourFinder.draw();
+	ofSetColor(0,0,0);
+	ofRect(1420, 840, 300, 100);
 	ofSetColor(0,255,0);
 
 	stringstream reportStream;
 	reportStream
-	<< "nearThreshold: " << nearThreshold << endl
-	<< "farThreshold: " << farThreshold << endl
+	// << "nearThreshold: " << nearThreshold << endl
+	// << "farThreshold: " << farThreshold << endl
+	// << "x: " << x << endl
+	// << "y: " << y << endl
 	<< ofToString(ofGetFrameRate()) << endl
 	<< ofToString(ofGetFrameNum()) << endl;
 
 	ofDrawBitmapString(reportStream.str(), 1420, 880);
 	ofPopStyle();
-
-
 }
 
 //--------------------------------------------------------------
@@ -118,6 +161,28 @@ void ofApp::keyPressed(int key){
 			nearThreshold --;
 			if (nearThreshold < 0) nearThreshold = 0;
 			break;
+
+		case 'f':
+			bDrawFeedback = !bDrawFeedback;
+			break;
+
+		// case OF_KEY_LEFT:
+		// 	x--;
+		// 	break;
+
+		// case OF_KEY_RIGHT:
+		// 	x++;
+		// 	break;
+
+		// case OF_KEY_UP:
+		// 	y--;
+		// 	break;
+
+		// case OF_KEY_DOWN:
+		// 	y++;
+		// 	break;
+
+		
 
 	}
 
