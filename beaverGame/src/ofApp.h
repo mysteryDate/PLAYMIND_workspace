@@ -22,6 +22,8 @@
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
+#include "Critter.h"
+#include <cmath>
 
 class ofApp : public ofBaseApp{
 
@@ -38,20 +40,8 @@ class ofApp : public ofBaseApp{
 		void drawHandOverlay();
 		void drawFeedback();
 
-		struct Beaver
-		{
-			Beaver() : hidden(false), currentFrame(0) {}
-			float v;
-			float d; //Direction, in degrees for now
-			ofPoint p;
-			int currentFrame;
-			bool 	hidden;
-			void draw(vector< ofImage > gif) {
-				gif[currentFrame].draw(p.x, p.y);
-			}
-		};
-		vector< Beaver > beavers;
-		vector< ofImage > beaverFrames;
+		vector< Critter > Beavers;
+		vector< ofImage > gifFrames;
 
 		// Input Processing
 		ofxKinect 			kinect;

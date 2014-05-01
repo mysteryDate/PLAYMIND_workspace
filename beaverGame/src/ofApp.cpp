@@ -3,6 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+	// ofSetDataPathRoot("../Resources/data/");
+
 	ofSetFrameRate(60);
 	background.loadImage("background.jpg");
 
@@ -29,7 +31,8 @@ void ofApp::setup(){
 	{
 		ofImage img;
 		img.loadImage("beaver/"+ofToString(i)+".gif");
-		beaverFrames.push_back(img);
+		img.resize(img.getWidth()*0.2, img.getHeight()*0.2);
+		gifFrames.push_back(img);
 	}
 
 }
@@ -79,21 +82,42 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::updateBeavers() {
 
-	if(ofGetFrameNum() % 59 == 0) {
+
+	float imgWidth = gifFrames[0].getWidth();
+	float imgHeight = gifFrames[0].getHeight();
+
+	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 12) {
 		// New beaver time, TODO magic numbers
-		Beaver newBeaver;
-		newBeaver.v = ofRandom(0, 10);
-		newBeaver.d = ofRandom(0, 359);
-		newBeaver.p = ofPoint(ofRandom(0,1920), ofRandom(0,1080));
-		beavers.push_back(newBeaver);
+		Critter newBeaver = Critter(12);
+		Beavers.push_back(newBeaver);
 	}
 
-	for (int i = 0; i < beavers.size(); ++i)
+	for (int i = 0; i < Beavers.size(); ++i)
 	{
-		Beaver *CB = &beavers[i];
-        CB->currentFrame++;
-		if(CB->currentFrame == beaverFrames.size())
-			CB->currentFrame = 0;
+		Beavers[i].update();
+		ofRectangle bRect = ofRectangle(Beavers[i].position.x, Beavers[i].position.y, imgWidth, imgHeight);
+		// Beaver has left the building
+		if(bRect.getMinX() > 1920 or bRect.getMaxX() < 0 or bRect.getMinY() > 1080 or bRect.getMaxY() < 0)
+				Beavers.erase(Beavers.begin() + i);
+		// Collision
+		// ofRectangle transRect = ofRectangle((Beavers[i].position.x )  
+		// int cx = (bRect.getCenter().x - INPUT_DATA_DX) / INPUT_DATA_ZOOM;
+		// int cy = (bRect.getCenter().y - INPUT_DATA_DY) / INPUT_DATA_ZOOM;
+		// ofPoint center = ofPoint(cx, cy);
+		Beavers[i].hidden = false; 
+		for (int j = 0; j < contourFinder.size(); ++j)
+		{
+			ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(j));
+			float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+			float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+			float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
+			float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
+			ofRectangle transRect = ofRectangle(tx, ty, tw, th);
+			if( transRect.intersects(bRect) )  {
+				Beavers[i].hidden = true;
+			}
+		}
+
 	}
 
 }
@@ -103,18 +127,19 @@ void ofApp::draw(){
     
     background.draw(0,0);
 	drawBeavers();
-    drawHandOverlay();
+    // drawHandOverlay();
     if(bDrawFeedback)
 	    drawFeedback();
+
 }
 
 void ofApp::drawBeavers() {
 
-	for (int i = 0; i < beavers.size(); ++i)
+	for (int i = 0; i < Beavers.size(); ++i)
 	{		
-		int currentFrame = beavers[i].currentFrame;
-		beaverFrames[currentFrame].draw(beavers[i].p.x, beavers[i].p.y);
-		// beavers[i].draw(beaverFrames);
+		Critter CB = Beavers[i];
+		if(!CB.hidden)
+			gifFrames[CB.currentFrame].draw(CB.position.x, CB.position.y);
 	}
 }
 
@@ -140,7 +165,7 @@ void ofApp::drawHandOverlay() {
 		ofEndShape();
 
 		ofSetColor(255,255,255);
-		ofCircle(center, 3);
+		// ofCircle(center, 3);
 
 	}
 
@@ -160,14 +185,49 @@ void ofApp::drawFeedback(){
 
 	stringstream reportStream;
 	reportStream
-	// << "nearThreshold: " << nearThreshold << endl
-	// << "farThreshold: " << farThreshold << endl
+	<< "nearThreshold: " << nearThreshold << endl
+	<< "farThreshold: " << farThreshold << endl 
 	// << "x: " << x << endl
 	// << "y: " << y << endl
 	<< ofToString(ofGetFrameRate()) << endl
 	<< ofToString(ofGetFrameNum()) << endl;
 
 	ofDrawBitmapString(reportStream.str(), 1420, 880);
+
+	// Where it thinks the beavers are
+	float imgWidth = gifFrames[0].getWidth();
+	float imgHeight = gifFrames[0].getHeight();
+	for (int i = 0; i < Beavers.size(); ++i)
+	{
+		// Beavers[i].hidden = false;
+		for (int j = 0; j < contourFinder.size(); ++j)
+		{
+			ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(j));
+			float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+			float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+			float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
+			float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
+			// ofRect(tx, ty, tw, th);
+			// ofPolyline line = contourFinder.getPolyline(i);
+			// ofPolyline hand;
+			// for (int k = 0; k < line.size(); ++k)
+			// {
+			// 	hand.addVertex(line[k].x * INPUT_DATA_ZOOM + INPUT_DATA_DX, line[k].y * INPUT_DATA_ZOOM + INPUT_DATA_DY);
+			// }
+			// hand.draw();
+		}
+		// ofRectangle bRect = ofRectangle(Beavers[i].position.x, Beavers[i].position.y, imgWidth, imgHeight);
+		// Collision
+		// int cx = (bRect.getCenter().x - INPUT_DATA_DX) / INPUT_DATA_ZOOM;
+		// int cy = (bRect.getCenter().y - INPUT_DATA_DY) / INPUT_DATA_ZOOM;
+		// ofPoint center = ofPoint(cx, cy);
+		// ofCircle(center, 3);
+		// ofNoFill();
+		// ofRect(bRect);
+		// ofCircle(ofPoint(bRect.getCenter().x, bRect.getCenter().y), 3);
+
+	}
+
 	ofPopStyle();
 }
 
