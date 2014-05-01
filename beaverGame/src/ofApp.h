@@ -42,10 +42,14 @@ class ofApp : public ofBaseApp{
 		cv::Mat 			croppedInput;
 		ofxCvGrayscaleImage	kinectImg;
 		ofxCvGrayscaleImage kinectBackground;
-		ofxCvGrayscaleImage kinectDiff;
 		int 				nearThreshold;
 		int 				farThreshold;
 		bool 				bLearnBackground;
+
+		ofxCvColorImage 	colorInput;
+		ofxCvColorImage 	colorBackground;
+		ofxCvGrayscaleImage 	monoColorInput;
+		ofxCvGrayscaleImage 	monoColorBackground;
 		
 		ofxCv::ContourFinder contourFinder;
 		ofxCv::ContourFinder contourFinder2;
