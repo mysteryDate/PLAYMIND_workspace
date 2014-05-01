@@ -24,6 +24,14 @@ void ofApp::setup(){
 	// y = INPUT_DATA_DY;
 	// w = INPUT_DATA_ZOOM;
 
+	// TODO magic num
+	for (int i = 0; i < 12; ++i)
+	{
+		ofImage img;
+		img.loadImage("beaver/"+ofToString(i)+".gif");
+		beaverFrames.push_back(img);
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -63,31 +71,64 @@ void ofApp::update(){
 
 		contourFinder.findContours(kinectImg);
 	}
+
+	updateBeavers();
  
+}
+
+//--------------------------------------------------------------
+void ofApp::updateBeavers() {
+
+	if(ofGetFrameNum() % 59 == 0) {
+		// New beaver time, TODO magic numbers
+		Beaver newBeaver;
+		newBeaver.v = ofRandom(0, 10);
+		newBeaver.d = ofRandom(0, 359);
+		newBeaver.p = ofPoint(ofRandom(0,1920), ofRandom(0,1080));
+		beavers.push_back(newBeaver);
+	}
+
+	for (int i = 0; i < beavers.size(); ++i)
+	{
+		Beaver *CB = &beavers[i];
+        CB->currentFrame++;
+		if(CB->currentFrame == beaverFrames.size())
+			CB->currentFrame = 0;
+	}
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
     background.draw(0,0);
-
+	drawBeavers();
     drawHandOverlay();
-
     if(bDrawFeedback)
 	    drawFeedback();
+}
+
+void ofApp::drawBeavers() {
+
+	for (int i = 0; i < beavers.size(); ++i)
+	{		
+		int currentFrame = beavers[i].currentFrame;
+		beaverFrames[currentFrame].draw(beavers[i].p.x, beavers[i].p.y);
+		// beavers[i].draw(beaverFrames);
+	}
 }
 
 void ofApp::drawHandOverlay() {
 
 	ofPushStyle();
 	ofPushMatrix();
-		ofSetColor(0,0,0);
 		ofFill();
 		ofTranslate(INPUT_DATA_DX, INPUT_DATA_DY);
 		ofScale(INPUT_DATA_ZOOM, INPUT_DATA_ZOOM);
 
 	for (int i = 0; i < contourFinder.size(); ++i)
 	{
+		ofSetColor(0,0,0);
 		ofPolyline blob = contourFinder.getPolyline(i);
 		blob = blob.getSmoothed(4);
 		ofPoint center = blob.getCentroid2D();

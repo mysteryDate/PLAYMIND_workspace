@@ -31,17 +31,27 @@ class ofApp : public ofBaseApp{
 
 		void update();
 		void transformInput();
+		void updateBeavers();
 
 		void draw();
+		void drawBeavers();
 		void drawHandOverlay();
 		void drawFeedback();
 
 		struct Beaver
 		{
-			ofVec2f v;
-			ofPoint pos;
-			ofImage currentFrame;
+			Beaver() : hidden(false), currentFrame(0) {}
+			float v;
+			float d; //Direction, in degrees for now
+			ofPoint p;
+			int currentFrame;
+			bool 	hidden;
+			void draw(vector< ofImage > gif) {
+				gif[currentFrame].draw(p.x, p.y);
+			}
 		};
+		vector< Beaver > beavers;
+		vector< ofImage > beaverFrames;
 
 		// Input Processing
 		ofxKinect 			kinect;
