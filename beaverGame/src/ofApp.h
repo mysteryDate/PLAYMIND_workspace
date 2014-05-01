@@ -45,14 +45,8 @@ class ofApp : public ofBaseApp{
 		int 				nearThreshold;
 		int 				farThreshold;
 		bool 				bLearnBackground;
-
-		ofxCvColorImage 	colorInput;
-		ofxCvColorImage 	colorBackground;
-		ofxCvGrayscaleImage 	monoColorInput;
-		ofxCvGrayscaleImage 	monoColorBackground;
 		
 		ofxCv::ContourFinder contourFinder;
-		ofxCv::ContourFinder contourFinder2;
 
 		void keyPressed(int key);
 };
