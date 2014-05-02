@@ -1,4 +1,4 @@
-#include "ofApp.h"
+ #include "ofApp.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -99,7 +99,7 @@ void ofApp::updateBeavers() {
 		handRects.push_back(transRect);
 	}
 
-	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 12) {
+	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 1) {
 		// New beaver time, TODO magic numbers
 		Critter newBeaver = Critter(12); // Arg is number of frames
 		Beavers.push_back(newBeaver);
@@ -128,7 +128,7 @@ void ofApp::updateBeavers() {
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    background.draw(0,0);
+    // background.draw(0,0);
 	drawBeavers();
     // drawHandOverlay();
     if(bDrawFeedback)
@@ -198,19 +198,32 @@ void ofApp::drawFeedback(){
 
 	ofDrawBitmapString(reportStream.str(), 1420, 880);
 
+	vector< ofRectangle > handRects;
+
+	// Get the hand bounding rects in proper reference frame
+	for (int i = 0; i < contourFinder.size(); ++i)
+	{
+		ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(i));
+		float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+		float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+		float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
+		float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
+		ofRectangle transRect = ofRectangle(tx, ty, tw, th);
+		handRects.push_back(transRect);
+	}
+
 	// Where it thinks the Beavers are
 	float imgWidth = gifFrames[0].getWidth();
 	float imgHeight = gifFrames[0].getHeight();
 	for (int i = 0; i < Beavers.size(); ++i)
 	{
-		// Beavers[i].hidden = false;
-		for (int j = 0; j < contourFinder.size(); ++j)
-		{
-			ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(j));
-			float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
-			float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
-			float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
-			float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
+		// for (int j = 0; j < contourFinder.size(); ++j)
+		// {
+		// 	ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(j));
+		// 	float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+		// 	float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+		// 	float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
+		// 	float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
 			// ofRect(tx, ty, tw, th);
 			// ofPolyline line = contourFinder.getPolyline(i);
 			// ofPolyline hand;
@@ -219,7 +232,15 @@ void ofApp::drawFeedback(){
 			// 	hand.addVertex(line[k].x * INPUT_DATA_ZOOM + INPUT_DATA_DX, line[k].y * INPUT_DATA_ZOOM + INPUT_DATA_DY);
 			// }
 			// hand.draw();
+		// }
+		map< int, ofVec2f > vectors = Beavers[i].vectors;
+		ofPushStyle();
+		for (int j = 0; j < vectors.size(); ++j)
+		{
+			ofSetColor(0, 255*j, 0);
+			ofLine(Beavers[i].position.x, Beavers[i].position.y, Beavers[i].position.x + vectors[j].x, Beavers[i].position.y + vectors[j].y);
 		}
+		ofPopStyle();
 		// ofRectangle bRect = ofRectangle(Beavers[i].position.x, Beavers[i].position.y, imgWidth, imgHeight);
 		// Collision
 		// int cx = (bRect.getCenter().x - INPUT_DATA_DX) / INPUT_DATA_ZOOM;
@@ -269,6 +290,11 @@ void ofApp::keyPressed(int key){
 
 		case 'f':
 			bDrawFeedback = !bDrawFeedback;
+			break;
+
+		case 'b':
+			Critter newBeaver = Critter(12); // Arg is number of frames
+			Beavers.push_back(newBeaver);
 			break;
 
 		// case OF_KEY_LEFT:
