@@ -20,6 +20,10 @@ public:
 	bool 	hidden;
 	int 	numFrames;
 
-	void update();
+	void update(vector< ofRectangle > hands);
+
+private:
+
+	ofVec2f findClosestHand(vector< ofRectangle > hands);
 
 };

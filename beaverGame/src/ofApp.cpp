@@ -85,35 +85,38 @@ void ofApp::updateBeavers() {
 
 	float imgWidth = gifFrames[0].getWidth();
 	float imgHeight = gifFrames[0].getHeight();
+	vector< ofRectangle > handRects;
+
+	// Get the hand bounding rects in proper reference frame
+	for (int i = 0; i < contourFinder.size(); ++i)
+	{
+		ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(i));
+		float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+		float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+		float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
+		float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
+		ofRectangle transRect = ofRectangle(tx, ty, tw, th);
+		handRects.push_back(transRect);
+	}
 
 	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 12) {
 		// New beaver time, TODO magic numbers
-		Critter newBeaver = Critter(12);
+		Critter newBeaver = Critter(12); // Arg is number of frames
 		Beavers.push_back(newBeaver);
 	}
 
 	for (int i = 0; i < Beavers.size(); ++i)
 	{
-		Beavers[i].update();
+		Beavers[i].update(handRects);
 		ofRectangle bRect = ofRectangle(Beavers[i].position.x, Beavers[i].position.y, imgWidth, imgHeight);
 		// Beaver has left the building
 		if(bRect.getMinX() > 1920 or bRect.getMaxX() < 0 or bRect.getMinY() > 1080 or bRect.getMaxY() < 0)
 				Beavers.erase(Beavers.begin() + i);
 		// Collision
-		// ofRectangle transRect = ofRectangle((Beavers[i].position.x )  
-		// int cx = (bRect.getCenter().x - INPUT_DATA_DX) / INPUT_DATA_ZOOM;
-		// int cy = (bRect.getCenter().y - INPUT_DATA_DY) / INPUT_DATA_ZOOM;
-		// ofPoint center = ofPoint(cx, cy);
 		Beavers[i].hidden = false; 
-		for (int j = 0; j < contourFinder.size(); ++j)
+		for (int j = 0; j < handRects.size(); ++j)
 		{
-			ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(j));
-			float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
-			float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
-			float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
-			float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
-			ofRectangle transRect = ofRectangle(tx, ty, tw, th);
-			if( transRect.intersects(bRect) )  {
+			if( handRects[j].intersects(bRect) )  {
 				Beavers[i].hidden = true;
 			}
 		}
@@ -187,6 +190,7 @@ void ofApp::drawFeedback(){
 	reportStream
 	<< "nearThreshold: " << nearThreshold << endl
 	<< "farThreshold: " << farThreshold << endl 
+	<< "numCritters: " << Beavers.size() << endl
 	// << "x: " << x << endl
 	// << "y: " << y << endl
 	<< ofToString(ofGetFrameRate()) << endl
@@ -194,7 +198,7 @@ void ofApp::drawFeedback(){
 
 	ofDrawBitmapString(reportStream.str(), 1420, 880);
 
-	// Where it thinks the beavers are
+	// Where it thinks the Beavers are
 	float imgWidth = gifFrames[0].getWidth();
 	float imgHeight = gifFrames[0].getHeight();
 	for (int i = 0; i < Beavers.size(); ++i)
