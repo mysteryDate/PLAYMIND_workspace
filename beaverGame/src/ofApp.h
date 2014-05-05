@@ -16,6 +16,9 @@
 
 // For the contour finder
 #define MIN_CONTOUR_AREA 1000
+
+// For animation
+#define NUM_FRAMES 24
 // -----------------------------------
 
 #include "ofMain.h"
