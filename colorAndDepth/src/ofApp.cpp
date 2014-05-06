@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ContourFinder.setMinArea(MIN_CONTOUR_AREA);
 
 	cThreshold = 25;
-	dThreshold = 176;
+	dThreshold = 170;
 
 	bDrawFeedback = false;
 	bShowColor = false;
@@ -70,19 +70,19 @@ void ofApp::draw(){
 
 	background.draw(0,0);
 	ContourFinder.draw();
-	ofPushMatrix();
-	ofScale(w, w);
-	ofTranslate(x, y);
-	if(bShowColor)
-		processedImage.draw(0,0);
-	else
-		depthImage.draw(0,0);
-	ofPopMatrix();
+	// ofPushMatrix();
+	// ofScale(w, w);
+	// ofTranslate(x, y);
+	// if(bShowColor)
+	// 	processedImage.draw(0,0);
+	// else
+	// 	depthImage.draw(0,0);
+	// ofPopMatrix();
 
-	for (int i = 0; i < contours.size(); ++i)
-	{
-		contours[i].draw();
-	}
+	// for (int i = 0; i < contours.size(); ++i)
+	// {
+	// 	contours[i].draw();
+	// }
 
 	ofPushStyle();
 	ofSetColor(0,0,0);

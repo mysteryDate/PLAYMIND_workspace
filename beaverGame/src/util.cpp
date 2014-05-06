@@ -1,6 +1,6 @@
 #include "util.h"
 
-vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy, int z, int r)
+vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy, float z, int r)
 {
 	vector< ofPolyline > output;		
 	for (int i = 0; i < input.size(); ++i)
@@ -19,7 +19,26 @@ vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy,
 	return output;
 }
 
-vector< ofPoint > util::transform(vector< ofPoint > input, int dx, int dy, int z, int r)
+vector< ofPolyline > util::transform(ofxCv::ContourFinder input, int dx, int dy, float z, int r)
+{
+	vector< ofPolyline > output;		
+	for (int i = 0; i < input.size(); ++i)
+	{
+		ofPolyline line = input.getPolyline(i);
+		ofPolyline tLine;
+		for (int j = 0; j < line.size(); ++j)
+		{
+			ofPoint pt = line[j];
+			float tx = pt.x * z + dx;
+			float ty = pt.y * z + dy;
+			tLine.addVertex(tx, ty);
+		}
+		output.push_back(tLine);
+	}
+	return output;
+}
+
+vector< ofPoint > util::transform(vector< ofPoint > input, int dx, int dy, float z, int r)
 {
 	vector< ofPoint > output;		
 	for (int i = 0; i < input.size(); ++i)
@@ -32,7 +51,7 @@ vector< ofPoint > util::transform(vector< ofPoint > input, int dx, int dy, int z
 	return output;
 }
 
-ofPoint util::transform(ofPoint input, int dx, int dy, int z, int r)
+ofPoint util::transform(ofPoint input, int dx, int dy, float z, int r)
 {
 	ofPoint output;		
 	float tx = input.x * z + dx;
