@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ContourFinder.setMinArea(MIN_CONTOUR_AREA);
 
 	cThreshold = 25;
-	dThreshold = 15;
+	dThreshold = 176;
 
 	bDrawFeedback = false;
 	bShowColor = false;
@@ -49,7 +49,7 @@ void ofApp::update(){
 			bLearnBackground = false;
 		}
 
-		depthImage -= depthImageBackground;
+		// depthImage -= depthImageBackground;
 		depthImage.threshold(dThreshold);  // Threshold out all but the nearest pixels
 
 		processedImage = colorImage;
@@ -73,11 +73,10 @@ void ofApp::draw(){
 	ofPushMatrix();
 	ofScale(w, w);
 	ofTranslate(x, y);
-	// if(bShowColor)
-	// 	processedImage.draw(0,0);
-	// else
-	// 	depthImage.draw(0,0);
-	// ContourFinder.draw(); ofPopMatrix();
+	if(bShowColor)
+		processedImage.draw(0,0);
+	else
+		depthImage.draw(0,0);
 	ofPopMatrix();
 
 	for (int i = 0; i < contours.size(); ++i)
