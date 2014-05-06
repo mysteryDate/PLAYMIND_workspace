@@ -1,6 +1,6 @@
 #include "util.h"
 
-vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy, int z, int r = 0)
+vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy, int z, int r)
 {
 	vector< ofPolyline > output;		
 	for (int i = 0; i < input.size(); ++i)
@@ -10,8 +10,8 @@ vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy,
 		for (int j = 0; j < line.size(); ++j)
 		{
 			ofPoint pt = line[j];
-			float tx = pt.x * z + x;
-			float ty = pt.y * z + x;
+			float tx = pt.x * z + dx;
+			float ty = pt.y * z + dy;
 			tLine.addVertex(tx, ty);
 		}
 		output.push_back(tLine);
@@ -19,24 +19,24 @@ vector< ofPolyline > util::transform(vector< ofPolyline > input, int dx, int dy,
 	return output;
 }
 
-vector< ofPoint > util::transform(vector< ofPoint > input, int dx, int dy, int z, int r = 0)
+vector< ofPoint > util::transform(vector< ofPoint > input, int dx, int dy, int z, int r)
 {
 	vector< ofPoint > output;		
 	for (int i = 0; i < input.size(); ++i)
 	{
 		ofPoint pt = input[i];
-		float tx = pt.x * z + x;
-		float ty = pt.y * z + x;
+		float tx = pt.x * z + dx;
+		float ty = pt.y * z + dy;
 		output.push_back(ofPoint(tx, ty));
 	}
 	return output;
 }
 
-ofPoint util::transform(ofPoint input, int dx, int dy, int z, int r = 0)
+ofPoint util::transform(ofPoint input, int dx, int dy, int z, int r)
 {
 	ofPoint output;		
-	float tx = input.x * z + x;
-	float ty = input.y * z + x;
+	float tx = input.x * z + dx;
+	float ty = input.y * z + dy;
 	output = ofPoint(tx, ty);
 	return output;
 }

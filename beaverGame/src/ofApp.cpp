@@ -10,7 +10,6 @@ void ofApp::setup(){
 	background.loadImage("background.jpg");
 
 	//kinect instructions
-	kinect.setRegistration(true);
 	kinect.init();
 	kinect.open();
 	if(USE_RGB_CAMERA) {
@@ -262,9 +261,10 @@ void ofApp::drawFeedback(){
 	reportStream
 	<< "nearThreshold: " << nearThreshold << endl
 	<< "farThreshold: " << farThreshold << endl 
-	<< "numCritters: " << Beavers.size() << endl
+	// << "numCritters: " << Beavers.size() << endl
 	<< "x: " << x << endl
 	<< "y: " << y << endl
+	<< "w: " << w << endl
 	<< ofToString(ofGetFrameRate()) << endl
 	<< ofToString(ofGetFrameNum()) << endl;
 
@@ -398,7 +398,17 @@ void ofApp::keyPressed(int key){
 		case OF_KEY_DOWN: {
 			y++;
 			break;
-			}		
+			}
+
+		case 'W': {
+			w+= 0.1;
+			break;
+		}	
+
+		case 'w': {
+			w-= 0.1;
+			break;
+		}	
 
 	}
 

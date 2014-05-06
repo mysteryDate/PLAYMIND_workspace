@@ -15,9 +15,9 @@
 #define INPUT_DATA_R 	0
 
 // Same, but for RGB camera
-#define COLOR_INPUT_DATA_ZOOM 	2.57
-#define COLOR_INPUT_DATA_DX		-25
-#define	COLOR_INPUT_DATA_DY		-100
+#define COLOR_INPUT_DATA_ZOOM 	2.77
+#define COLOR_INPUT_DATA_DX		-91
+#define	COLOR_INPUT_DATA_DY		-234
 #define COLOR_INPUT_DATA_R 		0
 
 // For the contour finder
@@ -35,6 +35,7 @@
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
 #include "Critter.h"
+#include "util.h"
 #include <cmath>
 
 class ofApp : public ofBaseApp{

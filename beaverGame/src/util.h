@@ -11,4 +11,4 @@ public:
 	ofPoint transform(ofPoint input, int dx, int dy, int z, int r = 0);
 	vector< ofPoint > transform(vector< ofPoint > input, int dx, int dy, int z, int r = 0);
 
-}
+};
