@@ -3,14 +3,20 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+
 	// ofSetDataPathRoot("../Resources/data/");
 
 	ofSetFrameRate(60);
 	background.loadImage("background.jpg");
 
 	//kinect instructions
+	kinect.setRegistration(true);
 	kinect.init();
 	kinect.open();
+	if(USE_RGB_CAMERA) {
+		kinectColor.allocate(kinect.width, kinect.height);
+		kinectColorBackground.allocate(kinect.width, kinect.height);
+	}
 	kinectImg.allocate(kinect.width, kinect.height);
 	kinectBackground.allocate(kinect.width, kinect.height);
 	bLearnBackground = false;
@@ -22,9 +28,9 @@ void ofApp::setup(){
 
 	bDrawFeedback = false;
 
-	// x = INPUT_DATA_DX;
-	// y = INPUT_DATA_DY;
-	// w = INPUT_DATA_ZOOM;
+	x = INPUT_DATA_DX;
+	y = INPUT_DATA_DY;
+	w = INPUT_DATA_ZOOM;
 
 	// TODO magic num
 	for (int i = 0; i < NUM_FRAMES; ++i)
@@ -45,24 +51,37 @@ void ofApp::update(){
 
 	if(kinect.isFrameNew()) {
 
-		kinectImg.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+		if(USE_RGB_CAMERA) {
+			kinectColor.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
+			if(bLearnBackground) {
+				kinectColorBackground = kinectColor;
+				bLearnBackground = false;
+			}
+			kinectImg = kinectColor;
+			kinectBackground = kinectColorBackground;
 
-		if(bLearnBackground == true) {
-			kinectBackground = kinectImg;
-			bLearnBackground = false;
+			kinectImg.absDiff(kinectBackground);
+			kinectImg.threshold(farThreshold);
 		}
+		else {
+			kinectImg.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+			if(bLearnBackground == true) {
+				kinectBackground = kinectImg;
+				bLearnBackground = false;
+			}
 
-		kinectImg -= kinectBackground;
+			kinectImg -= kinectBackground;
 
-		// Threshold by hand, because we need two planes 
-		// And I don't want to throw out the other information (by saturating)
-		unsigned char *pix = kinectImg.getPixels();
-		for (int i = 0; i < kinectImg.width * kinectImg.height; ++i)
-		{
-			if(pix[i] > farThreshold and pix[i] < nearThreshold)
-				pix[i] = 255;
-			else
-				pix[i] = 0;
+			// Threshold by hand, because we need two planes 
+			// And I don't want to throw out the other information (by saturating)
+			unsigned char *pix = kinectImg.getPixels();
+			for (int i = 0; i < kinectImg.width * kinectImg.height; ++i)
+			{
+				if(pix[i] > farThreshold and pix[i] < nearThreshold)
+					pix[i] = 255;
+				else
+					pix[i] = 0;
+			}
 		}
 		kinectImg.flagImageChanged();
 
@@ -97,8 +116,17 @@ void ofApp::updateBeavers() {
 		for (int j = 0; j < line.size(); ++j)
 		{
 			ofPoint pt = line[j];
-			float tx = pt.x * INPUT_DATA_ZOOM + INPUT_DATA_DX;
-			float ty = pt.y * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+			float tx, ty;
+			if(USE_RGB_CAMERA) {
+				// tx = pt.x * COLOR_INPUT_DATA_ZOOM + COLOR_INPUT_DATA_DX;
+				// ty = pt.y * COLOR_INPUT_DATA_ZOOM + COLOR_INPUT_DATA_DY;
+				tx = pt.x * w + x;
+				ty = pt.y * w + y;
+			}
+			else {
+				tx = pt.x * INPUT_DATA_ZOOM + INPUT_DATA_DX;
+				ty = pt.y * INPUT_DATA_ZOOM + INPUT_DATA_DY;
+			}
 			tLine.addVertex(tx,ty);
 		}
 		tLine.close();
@@ -189,6 +217,12 @@ void ofApp::drawHandOverlay() {
 	ofPushStyle();
 	ofPushMatrix();
 		ofFill();
+		if(USE_RGB_CAMERA) {
+			ofTranslate(x, y);
+			ofScale(w, w);
+			// ofTranslate(COLOR_INPUT_DATA_DX, COLOR_INPUT_DATA_DY);
+			// ofScale(COLOR_INPUT_DATA_ZOOM, COLOR_INPUT_DATA_ZOOM);			
+		}
 		ofTranslate(INPUT_DATA_DX, INPUT_DATA_DY);
 		ofScale(INPUT_DATA_ZOOM, INPUT_DATA_ZOOM);
 
@@ -229,8 +263,8 @@ void ofApp::drawFeedback(){
 	<< "nearThreshold: " << nearThreshold << endl
 	<< "farThreshold: " << farThreshold << endl 
 	<< "numCritters: " << Beavers.size() << endl
-	// << "x: " << x << endl
-	// << "y: " << y << endl
+	<< "x: " << x << endl
+	<< "y: " << y << endl
 	<< ofToString(ofGetFrameRate()) << endl
 	<< ofToString(ofGetFrameNum()) << endl;
 
@@ -242,6 +276,12 @@ void ofApp::drawFeedback(){
 	for (int i = 0; i < contourFinder.size(); ++i)
 	{
 		ofRectangle cbRect = ofxCv::toOf(contourFinder.getBoundingRect(i));
+		if(USE_RGB_CAMERA) {
+			float tx = cbRect.getMinX() * COLOR_INPUT_DATA_ZOOM + COLOR_INPUT_DATA_DX;
+			float ty = cbRect.getMinY() * COLOR_INPUT_DATA_ZOOM + COLOR_INPUT_DATA_DY;
+			float tw = cbRect.getWidth() * COLOR_INPUT_DATA_ZOOM;
+			float th = cbRect.getHeight() * COLOR_INPUT_DATA_ZOOM;			
+		}
 		float tx = cbRect.getMinX() * INPUT_DATA_ZOOM + INPUT_DATA_DX;
 		float ty = cbRect.getMinY() * INPUT_DATA_ZOOM + INPUT_DATA_DY;
 		float tw = cbRect.getWidth() * INPUT_DATA_ZOOM;
@@ -303,7 +343,6 @@ void ofApp::drawFeedback(){
 void ofApp::keyPressed(int key){
 
 	switch(key) {
-
 		case ' ':
 			bLearnBackground = true;
 			break;
@@ -335,30 +374,31 @@ void ofApp::keyPressed(int key){
 			bDrawFeedback = !bDrawFeedback;
 			break;
 
-		case 'b':
+		case 'b': {
 			Critter newBeaver = Critter(NUM_FRAMES); // Arg is number of frames
-			newBeaver.p.x = 1000;
-			newBeaver.p.y = 1000;
 			Beavers.push_back(newBeaver);
 			break;
+		}
 
-		// case OF_KEY_LEFT:
-		// 	x--;
-		// 	break;
+		case OF_KEY_LEFT: {
+			x--;
+			break;
+		}
 
-		// case OF_KEY_RIGHT:
-		// 	x++;
-		// 	break;
+		case OF_KEY_RIGHT: {
+			x++;
+			break;
+		}
 
-		// case OF_KEY_UP:
-		// 	y--;
-		// 	break;
+		case OF_KEY_UP: {
+			y--;
+			break;
+		}
 
-		// case OF_KEY_DOWN:
-		// 	y++;
-		// 	break;
-
-		
+		case OF_KEY_DOWN: {
+			y++;
+			break;
+			}		
 
 	}
 

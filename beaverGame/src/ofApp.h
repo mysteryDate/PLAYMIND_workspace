@@ -14,11 +14,20 @@
 #define	INPUT_DATA_DY	-100
 #define INPUT_DATA_R 	0
 
+// Same, but for RGB camera
+#define COLOR_INPUT_DATA_ZOOM 	2.57
+#define COLOR_INPUT_DATA_DX		-25
+#define	COLOR_INPUT_DATA_DY		-100
+#define COLOR_INPUT_DATA_R 		0
+
 // For the contour finder
 #define MIN_CONTOUR_AREA 1000
 
 // For animation
 #define NUM_FRAMES 24
+
+// Color image
+#define USE_RGB_CAMERA true
 // -----------------------------------
 
 #include "ofMain.h"
@@ -57,6 +66,10 @@ class ofApp : public ofBaseApp{
 		int 				nearThreshold;
 		int 				farThreshold;
 		bool 				bLearnBackground;
+
+		// For color
+		ofxCvColorImage 	kinectColor;
+		ofxCvColorImage 	kinectColorBackground;
 		
 		// Cv
 		ofxCv::ContourFinder contourFinder;
