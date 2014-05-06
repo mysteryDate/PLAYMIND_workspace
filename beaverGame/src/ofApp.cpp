@@ -86,13 +86,13 @@ void ofApp::updateBeavers() {
 
 	float Iw = gifFrames[0].getWidth();
 	float Ih = gifFrames[0].getHeight();
+	hands.clear();
 	// vector< ofRectangle > handRects;
-	vector< ofPolyline > hands;
 
 	// Get the hand bounding rects in proper reference frame
 	for (int i = 0; i < contourFinder.size(); ++i)
 	{
-		ofPolyline line = contourFinder.getPolyline(i);
+		ofPolyline line = contourFinder.getPolyline(i).getSmoothed(4);
 		ofPolyline tLine;	
 		for (int j = 0; j < line.size(); ++j)
 		{
@@ -112,38 +112,44 @@ void ofApp::updateBeavers() {
 		// handRects.push_back(transRect);
 	}
 
-	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 1) {
+	if(ofGetFrameNum() % 30 == 0 && Beavers.size() < 120) {
 		// New beaver time, TODO magic numbers
 		Critter newBeaver = Critter(NUM_FRAMES); // Arg is number of frames
-		newBeaver.p.x = 1000;
-		newBeaver.p.y = 1000;
 		Beavers.push_back(newBeaver);
 	}
 
 	for (int i = 0; i < Beavers.size(); ++i)
 	{
 		Beavers[i].update(hands);
-		Critter B = Beavers[i];
+		Critter * B = &Beavers[i];
 		// ofRectangle bRect = ofRectangle(Beavers[i].p.x - Iw/2, Beavers[i].p.y - im, Iw, Ih);
 		vector< ofPoint > corners;
 		for (int j = 0; j < 4; ++j)
 		{
-			int xd = (i & 1)*2 - 1;
-			int yd = (i & 2) - 1;
-			float x = B.p.x + cos(B.d*PI/180)*Iw*xd/2 + sin(B.d*PI/180)*Ih*yd/2;
-			float y = B.p.y - sin(B.d*PI/180)*Iw*xd/2 + cos(B.d*PI/180)*Ih*yd/2;
+			int xd = (j & 1)*2 - 1;
+			int yd = (j & 2) - 1;
+			float x = B->p.x + cos(B->d*PI/180)*Iw*xd/2 + sin(B->d*PI/180)*Ih*yd/2;
+			float y = B->p.y - sin(B->d*PI/180)*Iw*xd/2 + cos(B->d*PI/180)*Ih*yd/2;
 			corners.push_back(ofPoint(x,y));
 		}
 		// Beaver has left the building
-		if(B.p.x > ofGetWindowWidth() + Iw or B.p.x < 0 - Iw or B.p.y > ofGetWindowHeight() + Iw or B.p.y < 0 + Iw)
+		if(B->p.x > ofGetWindowWidth() + Iw or B->p.x < 0 - Iw or B->p.y > ofGetWindowHeight() + Iw or B->p.y < 0 - Iw)
 				Beavers.erase(Beavers.begin() + i);
 		// Collision
-		Beavers[i].hidden = false; 
+		B->hidden = false; 
 		for (int j = 0; j < hands.size(); ++j)
 		{
-			if( hands[j].inside(Beavers[i].p.x, Beavers[i].p.y) )  {
-				Beavers[i].v = 0;
-				Beavers[i].hidden = true;
+			if( hands[j].inside(B->p.x, B->p.y) )  {
+				B->v = 0;
+				B->hidden = true;
+				continue;
+			}
+			for (int k = 0; k < corners.size(); ++k)
+			{
+				if( hands[j].inside(corners[k]) ) {
+					B->v = 0;
+					B->hidden = true;
+				}
 			}
 		}
 
@@ -154,7 +160,7 @@ void ofApp::updateBeavers() {
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    // background.draw(0,0);
+    background.draw(0,0);
 	drawBeavers();
     // drawHandOverlay();
     if(bDrawFeedback)
@@ -242,6 +248,11 @@ void ofApp::drawFeedback(){
 		float th = cbRect.getHeight() * INPUT_DATA_ZOOM;
 		ofRectangle transRect = ofRectangle(tx, ty, tw, th);
 		handRects.push_back(transRect);
+	}
+
+	for (int i = 0; i < hands.size(); ++i)
+	{
+		hands[i].draw();
 	}
 
 	// Where it thinks the Beavers are

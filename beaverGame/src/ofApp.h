@@ -45,6 +45,7 @@ class ofApp : public ofBaseApp{
 
 		vector< Critter > Beavers;
 		vector< ofImage > gifFrames;
+		vector< ofPolyline > hands;
 
 		// Input Processing
 		ofxKinect 			kinect;
