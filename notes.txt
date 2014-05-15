@@ -15,3 +15,26 @@ Perhaps some combination?
 ===============
 Smallest female hand: 14.8 cm (6”)
 Largest Male hand: 21 cm (8.25”)
+
+===============
+Phases:
+1. Water effect
+2. River names, water effect
+3. Natives (1.30)
+4. None
+5. Beavers
+6. Tree chopping (transitions to P2)
+7. Muni names
+8. Churches
+9. Stations
+10. Photos on hands
+
+Film
+P1
+Ice start: 529
+all melted: 1127
+rivers: 1293
+native villiages: 2600
+nothing: 4272
+beavers: 5600
+trees (and transition): 7200

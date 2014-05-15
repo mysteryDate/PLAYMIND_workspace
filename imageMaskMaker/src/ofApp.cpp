@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	img.loadImage("riviere_masque_alpha.png");
+	img.loadImage("riviereMask_v3.png");
 
 	unsigned char *pix = img.getPixels();
 
@@ -31,7 +31,7 @@ void ofApp::setup(){
     
     img2.setFromPixels(img.getPixels(), img.getWidth(), img.getHeight(), OF_IMAGE_COLOR_ALPHA);
     
-    img2.saveImage("river_mask_processed.png");
+    img2.saveImage("river_mask_V3_processed.png");
 
 }
 
