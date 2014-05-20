@@ -6,20 +6,25 @@ void ofApp::setup(){
 
 	ofSetFrameRate(60);
 
-	firstVideo.loadMovie("videos/Map_Argenteuil_P1_v11.mov");
+	firstVideo.loadMovie("videos/Argenteuille_edit_p1_v14.mov");
+	secondVideo.loadMovie("videos/Argenteuille_edit_p2_v14.mov");
 	firstVideo.setLoopState(OF_LOOP_NONE);
-	secondVideo.loadMovie("videos/Map_Argenteuil_P2_v11.mov");
 	secondVideo.setLoopState(OF_LOOP_NONE);
-	// firstVideo.play();
-	video = &firstVideo;
-	video->setFrame(4272);
-	currentPhase = 3;
-	nextPhaseFrame = 5600;
-	// nextPhaseFrame = video->getCurrentFrame() + 1;
 
 	ofBackground(0,0,0);  
 	XML.loadFile("settings.xml");
 	loadSettings();
+	loadSettings();
+	currentPhase = START_PHASE - 1;
+	XML.pushTag("PHASEINFORMATION");
+		nextPhaseFrame = XML.getValue("PHASE:STARTFRAME", nextPhaseFrame + 1000, currentPhase + 1);
+		int v = XML.getValue("PHASE:VIDEO", 1, currentPhase + 1);
+		if(v == 1)
+			video = &firstVideo;
+		if(v == 2)
+			video = &secondVideo;
+		video->setFrame(nextPhaseFrame - 1);
+	XML.popTag();
 
 	kinect.init();
 	kinect.setRegistration(REGISTRATION);
@@ -33,14 +38,13 @@ void ofApp::setup(){
 	activeRegion = 0;
 
 	// Creating regions
-	// activeRegion = 0;
 	// ofBuffer buffer = ofBufferFromFile("natives.txt");
 	// while(!buffer.isLastLine() ) {
 	// 	string name = buffer.getNextLine().c_str();
 	// 	regions.insert(pair<string, ofPolyline>(name, ofPolyline()));
 	// }
 	activeRegion = 0;
-	regions.insert(pair<string, ofPolyline>("La bataille\ndu long Sault", ofPolyline()));
+	regions.insert(pair<string, ofPolyline>("Station L'original", ofPolyline()));
 
 }
 
@@ -167,7 +171,7 @@ void ofApp::adjustPhase() {
 void ofApp::drawFeedback() {
 
 	ofPushStyle();
-	depthImage.draw(0,0);
+	// depthImage.draw(0,0); 
 	ofSetColor(0,255,0);
 	ofTranslate(crop_left, crop_top);
 		ContourFinder.draw();
@@ -323,6 +327,12 @@ switch(key) {
 				video_y++; 
 			if(bCalibrateKinect)
 				kinect_y++;
+			break;
+
+		case OF_KEY_BACKSPACE:
+			for(auto iter=regions.begin(); iter!=regions.end(); ++iter) {
+				iter->second.clear();
+			}
 			break;
 
 		case 'Z':

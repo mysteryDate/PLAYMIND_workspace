@@ -21,5 +21,9 @@ class ofApp : public ofBaseApp{
 
 		ofImage img;
 		ofImage img2;
+
+		ofVideoPlayer video;
+
+		ofVideoPlayer outVideo;
 		
 };

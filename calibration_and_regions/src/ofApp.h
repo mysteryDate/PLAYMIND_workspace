@@ -21,6 +21,8 @@
 
 #define REGISTRATION false
 
+#define START_PHASE 7
+
 class ofApp : public ofBaseApp{
 
 public:

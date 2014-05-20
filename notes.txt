@@ -38,3 +38,10 @@ native villiages: 2600
 nothing: 4272
 beavers: 5600
 trees (and transition): 7200
+
+======
+old calibration
+        <X>-96.000000000</X>
+        <Y>55.000000000</Y>
+        <W>1884.000000000</W>
+        <H>1047.000000000</H>
